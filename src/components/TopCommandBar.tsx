@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useStudyStore, ViewMode } from "@/store/useStudyStore";
 import {
   TOTAL_TOPICS_COUNT,
@@ -68,6 +68,13 @@ export function TopCommandBar() {
   } = useStudyStore();
 
   const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [mobileUrl, setMobileUrl] = useState("http://192.168.178.83:3088?view=iphone");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setMobileUrl(`${window.location.origin}?view=iphone`);
+    }
+  }, []);
 
   return (
     <>
@@ -226,7 +233,7 @@ export function TopCommandBar() {
       <QrCodeModal
         isOpen={qrModalOpen}
         onClose={() => setQrModalOpen(false)}
-        networkUrl="http://192.168.178.83:3088?view=iphone"
+        networkUrl={mobileUrl}
       />
     </>
   );

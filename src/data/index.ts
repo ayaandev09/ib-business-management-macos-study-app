@@ -8,6 +8,7 @@ import { BMT_TOPICS } from "./bmtTopics";
 
 export * from "./types";
 export * from "./metadata";
+export * from "./glossaryTerms";
 
 export const SYLLABUS_UNITS: UnitPart[] = [
   {
