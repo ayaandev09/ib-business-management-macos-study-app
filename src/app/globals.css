@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+:root {
+  --bg-obsidian: #05070f;
+  --bg-slate-dark: #090d1a;
+  --glass-surface: rgba(15, 21, 38, 0.58);
+  --glass-surface-elevated: rgba(24, 33, 58, 0.68);
+  --glass-border-highlight: rgba(255, 255, 255, 0.15);
+  --glass-border-subtle: rgba(255, 255, 255, 0.08);
+
+  /* IB BM 4 Key Concepts Accent Colors */
+  --accent-creativity: #a855f7; /* Violet / Purple */
+  --accent-change: #0ea5e9;     /* Sky / Cyan */
+  --accent-ethics: #10b981;     /* Emerald / Green */
+  --accent-sustainability: #f59e0b; /* Amber / Golden */
+  --accent-hl: #f43f5e;         /* Rose / Crimson for HL */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  background-color: var(--bg-obsidian);
+  color: #f1f5f9;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--bg-obsidian);
+  overflow-x: hidden;
+}
+
+/* ============================================================================
+   macOS & iOS 26 "LIQUID GLASS" SPECULAR REFRACTION ENGINE
+   ============================================================================ */
+
+/* 1. Primary Floating Sidebar Shell */
+.liquid-glass-sidebar {
+  background: linear-gradient(
+    145deg,
+    rgba(20, 27, 48, 0.74) 0%,
+    rgba(10, 14, 28, 0.86) 100%
+  );
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 24px 60px -12px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.08);
+  transform: translate3d(0, 0, 0);
+}
+
+/* 2. Bento Study Card Surface */
+.liquid-glass-bento {
+  background: linear-gradient(
+    135deg,
+    rgba(22, 30, 54, 0.6) 0%,
+    rgba(12, 17, 32, 0.72) 100%
+  );
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow:
+    0 18px 42px -10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.04);
+  transition:
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.24s ease,
+    box-shadow 0.24s ease;
+  transform: translate3d(0, 0, 0);
+}
+
+.liquid-glass-bento:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 24px 52px -12px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.28),
+    0 0 28px -8px rgba(14, 165, 233, 0.2);
+}
+
+/* 3. Floating Bottom Dock Pill */
+.liquid-glass-dock {
+  background: linear-gradient(
+    180deg,
+    rgba(26, 36, 64, 0.8) 0%,
+    rgba(10, 15, 30, 0.9) 100%
+  );
+  backdrop-filter: blur(32px) saturate(210%);
+  -webkit-backdrop-filter: blur(32px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 25px 60px -10px rgba(0, 0, 0, 0.85),
+    0 0 40px -10px rgba(14, 165, 233, 0.24),
+    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.28);
+  transform: translate3d(0, 0, 0);
+}
+
+/* 4. Pills & Interactive Badges */
+.liquid-glass-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.liquid-glass-pill:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.26);
+  transform: translateY(-1px);
+}
+
+.liquid-glass-pill-active {
+  background: linear-gradient(
+    135deg,
+    rgba(14, 165, 233, 0.35) 0%,
+    rgba(168, 85, 247, 0.3) 100%
+  );
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  box-shadow:
+    0 4px 18px -2px rgba(14, 165, 233, 0.38),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ==================== MAC WIDESCREEN & IPHONE 16e VIEWPORT SHELLS ==================== */
+.mac-dashboard-shell {
+  width: 100%;
+  max-width: 1720px;
+  min-height: 100vh;
+  margin-inline: auto;
+  padding: 1rem 1.25rem 7rem;
+  position: relative;
+}
+
+.iphone-16e-shell {
+  width: 100%;
+  max-width: 412px;
+  min-height: 100dvh;
+  margin-inline: auto;
+  background-color: var(--bg-obsidian);
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+  padding-inline: 0.85rem;
+  position: relative;
+  overflow-x: clip;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 30px 90px rgba(0, 0, 0, 0.9);
+}
+
+/* Custom Scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(10, 15, 28, 0.7);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+/* Deferred animations */
+.deferred-chapter-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
+}
+
+/* KaTeX Formula Enhancement */
+.katex-formula-wrapper {
+  font-size: 1.12rem;
+  color: #6ee7b7;
+}
+
+.katex-formula-wrapper .katex-display {
+  margin: 0.4em 0 !important;
+}
+
+.katex .mord.text {
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.katex .frac-line {
+  border-bottom-width: 1.5px !important;
+  border-color: rgba(110, 231, 183, 0.8) !important;
+}
