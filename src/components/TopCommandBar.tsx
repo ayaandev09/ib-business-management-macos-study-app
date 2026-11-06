@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   LayoutGrid,
   Layers,
@@ -274,7 +275,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
         {/* ========================================================================= */}
         {/* DESKTOP FULL COMMAND HEADER (>= 640px) */}
         {/* ========================================================================= */}
-        <div className="hidden sm:flex flex-wrap items-center justify-between gap-3 w-full pb-2.5 border-b border-white/10 min-h-[44px]">
+        <div className="hidden sm:flex items-center justify-between gap-3 w-full pb-2.5 border-b border-white/10 min-h-[44px]">
           {/* Brand & Breadcrumbs (Left) */}
           <div className="flex items-center gap-2 shrink-0 mac-no-drag">
             {/* Native macOS Sidebar Toggle (⌘B) */}
@@ -310,63 +311,40 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             </button>
           </div>
 
-          {/* Right Section: Modality Switchers & Action Pills */}
-          <div className="flex flex-wrap items-center justify-end gap-2 shrink-0 mac-no-drag">
-            {/* Study Goal Switcher: Revision vs Study */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-black/50 border border-white/12 text-xs">
-              {studyGoal === "revise" ? (
-                <ChromaticButton
-                  onClick={() => setStudyGoal("revise")}
-                  title="Pre-lesson cramming, exam traps & active recall"
-                  color="#d97706"
-                  colorMode="spectrum"
-                  speed={0.7}
-                  hoverEffect="brighten"
-                  className="chromatic-pill !px-3 !py-1.5 text-xs font-bold whitespace-nowrap shadow-md"
-                >
-                  <Zap className="w-3.5 h-3.5 text-amber-200 mr-1" />
-                  <span>Revision</span>
-                </ChromaticButton>
-              ) : (
-                <button
-                  onClick={() => setStudyGoal("revise")}
-                  title="Pre-lesson cramming, exam traps & active recall"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-slate-200 transition-all cursor-pointer whitespace-nowrap"
-                >
-                  <Zap className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Revision</span>
-                </button>
-              )}
-
-              {studyGoal === "learn" ? (
-                <ChromaticButton
-                  onClick={() => setStudyGoal("learn")}
-                  title="First-time guided study with context"
-                  color="#00802f"
-                  colorMode="spectrum"
-                  speed={0.7}
-                  hoverEffect="brighten"
-                  className="chromatic-pill !px-3 !py-1.5 text-xs font-bold whitespace-nowrap shadow-md"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-emerald-200 mr-1" />
-                  <span>Study</span>
-                </ChromaticButton>
-              ) : (
-                <button
-                  onClick={() => setStudyGoal("learn")}
-                  title="First-time guided study with context"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-slate-200 transition-all cursor-pointer whitespace-nowrap"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-emerald-300" />
-                  <span>Study</span>
-                </button>
-              )}
+          {/* Right Section: Compact Ergonomic Modality Switchers & Action Pills */}
+          <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0 mac-no-drag">
+            {/* Study Goal Switcher: Revision vs Study (Compact Segmented Pill) */}
+            <div className="flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs">
+              <button
+                onClick={() => setStudyGoal("revise")}
+                title="Pre-lesson cramming, exam traps & active recall"
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  studyGoal === "revise"
+                    ? "bg-amber-500/25 text-amber-200 border border-amber-400/40 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Zap className="w-3 h-3 text-amber-300" />
+                <span className="hidden lg:inline text-[11px]">Revise</span>
+              </button>
+              <button
+                onClick={() => setStudyGoal("learn")}
+                title="First-time guided study with context"
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  studyGoal === "learn"
+                    ? "bg-emerald-500/25 text-emerald-200 border border-emerald-400/40 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <BookOpen className="w-3 h-3 text-emerald-300" />
+                <span className="hidden lg:inline text-[11px]">Study</span>
+              </button>
             </div>
 
             {/* Academic & Professional Typography Switcher */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-black/50 border border-white/12 text-xs">
-              <span className="pl-2.5 text-slate-400 flex items-center gap-1 text-[11px] font-bold">
-                <BookA className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs">
+              <span className="pl-2 text-slate-400 flex items-center">
+                <BookA className="w-3 h-3 text-emerald-400" />
               </span>
               <select
                 value={currentAcademicFont}
@@ -376,16 +354,16 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                   setHandwrittenStyle(val);
                 }}
                 title="Academic & Professional Typography Selection"
-                className="bg-transparent text-xs font-bold text-emerald-200 border-none rounded-full px-2.5 py-1 focus:outline-none cursor-pointer"
+                className="bg-transparent text-[11px] font-bold text-emerald-200 border-none rounded-full px-2 py-1 focus:outline-none cursor-pointer"
               >
                 <option value="newsreader" className="bg-slate-900 text-white">
-                  🎓 Oxford Newsreader
+                  🎓 Newsreader
                 </option>
                 <option value="garamond" className="bg-slate-900 text-white">
-                  🏛️ Classical Garamond
+                  🏛️ Garamond
                 </option>
                 <option value="jakarta" className="bg-slate-900 text-white">
-                  🔬 Modern Jakarta Pro
+                  🔬 Jakarta
                 </option>
               </select>
             </div>
@@ -394,11 +372,11 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={openExamSprint}
               title="Launch Timed Exam Sprint (⌘E)"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-400/35 hover:bg-emerald-500/25 shadow-sm"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-400/35 hover:bg-emerald-500/25 shadow-sm soft-button shrink-0"
             >
               <Timer className="w-3.5 h-3.5 text-emerald-300 animate-pulse" />
-              <span>Exam Sprint</span>
-              <span className="text-[10px] font-mono text-emerald-400/70 ml-0.5">⌘E</span>
+              <span className="hidden xl:inline text-[11px]">Sprint</span>
+              <span className="text-[10px] font-mono text-emerald-400/70">⌘E</span>
             </button>
 
             {/* Pro Analytical Inspector Toggle (Shown only when tucked away to prevent collision) */}
@@ -406,14 +384,14 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <button
                 onClick={toggleInspector}
                 title="Unfold Analytical Inspector from Top Navigation Bar (⌘I)"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border soft-button shrink-0 bg-emerald-950/60 text-emerald-300 border-emerald-400/40 tucked-pill-beacon-emerald"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border soft-button shrink-0 bg-emerald-950/60 text-emerald-300 border-emerald-400/40 tucked-pill-beacon-emerald"
               >
                 <Briefcase className="w-3.5 h-3.5 text-emerald-300" />
-                <span>Inspector</span>
+                <span className="hidden sm:inline text-[11px]">Inspector</span>
                 <span className="px-1.5 py-0.2 rounded-full bg-emerald-400/20 text-[9px] font-mono text-emerald-200 uppercase tracking-wider font-semibold border border-emerald-300/30">
                   Tucked
                 </span>
-                <span className="text-[10px] font-mono text-emerald-400/70 ml-0.5">⌘I</span>
+                <span className="text-[10px] font-mono text-emerald-400/70">⌘I</span>
               </button>
             )}
 
@@ -422,7 +400,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <button
                 onClick={onOpenWalkthrough}
                 title="Interactive App Walkthrough & Guide (Tour)"
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-400/35 shadow-sm soft-button shrink-0"
+                className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-400/35 shadow-sm soft-button shrink-0"
               >
                 <Compass className="w-3.5 h-3.5 text-emerald-400" />
                 <span className="hidden xl:inline text-[11px]">Tour</span>
@@ -433,7 +411,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={() => setIsShortcutsOpen((prev) => !prev)}
               title="Keyboard Shortcuts Cheatsheet (?)"
-              className="hidden md:flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all cursor-pointer border bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border-white/10 shadow-sm soft-button shrink-0"
+              className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all cursor-pointer border bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border-white/10 shadow-sm soft-button shrink-0"
             >
               <span className="text-xs font-mono font-bold text-slate-300">?</span>
             </button>
@@ -445,7 +423,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
         {/* ========================================================================= */}
         <nav
           aria-label="Integrated Main Sections Bar"
-          className="w-full grid grid-cols-5 gap-1 sm:gap-1.5 p-1 bg-black/60 border border-white/12 rounded-2xl shadow-inner"
+          className="w-full grid grid-cols-5 gap-1 sm:gap-1.5 p-1 bg-black/60 border border-white/12 rounded-2xl shadow-inner relative"
         >
           {navModes.map((mode) => {
             const isActive = viewMode === mode.id;
@@ -453,17 +431,24 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <button
                 key={mode.id}
                 onClick={() => setViewMode(mode.id)}
-                className={`col-span-1 flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-1 rounded-xl text-xs font-bold transition-all cursor-pointer truncate ${
+                className={`relative col-span-1 flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-1 rounded-xl text-xs font-bold transition-colors cursor-pointer truncate ${
                   isActive
-                    ? "bg-emerald-500/25 text-emerald-200 border border-emerald-400/50 shadow-md shadow-emerald-500/20"
+                    ? "text-emerald-200"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <span className={isActive ? "text-emerald-300 shrink-0" : "text-slate-400 shrink-0"}>
+                {isActive && (
+                  <motion.div
+                    layoutId="activeNavTabIndicator"
+                    transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                    className="absolute inset-0 rounded-xl bg-emerald-500/25 border border-emerald-400/50 shadow-md shadow-emerald-500/20 pointer-events-none"
+                  />
+                )}
+                <span className={`relative z-10 ${isActive ? "text-emerald-300 shrink-0" : "text-slate-400 shrink-0"}`}>
                   {mode.icon}
                 </span>
-                <span className="hidden 2xl:inline truncate">{mode.label}</span>
-                <span className="inline 2xl:hidden truncate">{mode.shortLabel}</span>
+                <span className="relative z-10 hidden 2xl:inline truncate">{mode.label}</span>
+                <span className="relative z-10 inline 2xl:hidden truncate">{mode.shortLabel}</span>
               </button>
             );
           })}

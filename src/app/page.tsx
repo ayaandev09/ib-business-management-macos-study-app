@@ -2,6 +2,7 @@
 
 import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
+import { AmbientAuroraCanvas } from "@/components/AmbientAuroraCanvas";
 import { FloatingSidebar } from "@/components/FloatingSidebar";
 import { TopCommandBar } from "@/components/TopCommandBar";
 import { WidgetBridge } from "@/components/WidgetBridge";
@@ -242,6 +243,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
             : "opacity-0 pointer-events-none select-none"
         }`}
       >
+        <AmbientAuroraCanvas />
         {/* Live Sync Toast Banner */}
       {syncToastMessage && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 max-w-[92%] px-4 py-2.5 rounded-full bg-emerald-500/25 border border-emerald-400/50 text-emerald-200 backdrop-blur-2xl shadow-2xl flex items-center gap-2 text-xs animate-in fade-in slide-in-from-top-4 duration-300">
