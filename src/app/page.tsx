@@ -28,6 +28,7 @@ import {
   decodeSyncFromUrl,
   pullSyncFromServer,
 } from "@/lib/syncService";
+import { initGlobalTactileListener } from "@/lib/tactileHaptics";
 import {
   CheckCircle2,
   ArrowRight,
@@ -94,6 +95,12 @@ export default function IBBusinessManagementStudyDashboardPage() {
       document.documentElement.setAttribute("data-handwritten-style", activeFont);
     }
   }, [academicStyle, handwrittenStyle]);
+
+  // Activate universal tactile mechanical feedback on buttons
+  useEffect(() => {
+    const cleanup = initGlobalTactileListener();
+    return cleanup;
+  }, []);
 
   // Global Keyboard Shortcut: Cmd/Ctrl + I to toggle Analytical Inspector, Cmd/Ctrl + E to toggle Exam Sprint
   useEffect(() => {
