@@ -275,9 +275,9 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
         {/* ========================================================================= */}
         {/* DESKTOP FULL COMMAND HEADER (>= 640px) */}
         {/* ========================================================================= */}
-        <div className="hidden sm:flex items-center justify-between gap-3 w-full pb-2 border-b border-white/10 min-h-[44px]">
-          {/* Brand & Breadcrumbs (Left) */}
-          <div className="flex items-center gap-2 shrink-0 mac-no-drag">
+        <div className="hidden sm:flex items-center justify-between gap-2 w-full pb-2 border-b border-white/10 min-h-[42px] max-w-full overflow-hidden">
+          {/* Brand & Breadcrumbs (Left: Flexible, shrinks cleanly without pushing controls) */}
+          <div className="flex items-center gap-2 min-w-0 shrink mac-no-drag">
             {/* Native macOS Sidebar Toggle (⌘B) */}
             <button
               onClick={toggleSidebar}
@@ -295,7 +295,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={handleOpenDiagnostics}
               title="Click to run live IB BM System Diagnostics"
-              className="flex items-center gap-2 min-w-0 text-left cursor-pointer group shrink-0"
+              className="flex items-center gap-2 min-w-0 text-left cursor-pointer group"
             >
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500/25 via-teal-500/20 to-sky-500/25 border border-emerald-400/40 flex items-center justify-center p-1 shadow-md relative shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
                 <IBBusinessAppLogo className="w-full h-full object-contain" />
@@ -311,41 +311,23 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             </button>
           </div>
 
-          {/* Center: Integrated Spotlight Quick Search Pill (Shown on very wide screens or flex-collapses) */}
-          <button
-            type="button"
-            onClick={openSpotlight}
-            title="Spotlight Search 52 Topics, Tools & Cases (⌘K)"
-            className="flex-1 max-w-[220px] 2xl:max-w-xs hidden 2xl:flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-black/50 hover:bg-black/70 border border-white/10 hover:border-emerald-400/40 transition-all text-left cursor-pointer group mac-no-drag shadow-inner"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <Search className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
-              <span className="text-xs text-slate-300 group-hover:text-white transition-colors truncate">
-                Search topics, cases...
-              </span>
-            </div>
-            <kbd className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/25 shrink-0">
-              ⌘K
-            </kbd>
-          </button>
-
-          {/* Right Section: Compact Ergonomic Modality Switchers & Action Pills */}
-          <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0 mac-no-drag">
-            {/* Quick Spotlight Trigger Button (Compact for non-2xl viewports) */}
+          {/* Right Section: Compact Ergonomic Modality Switchers & Action Pills (Max ~280px total) */}
+          <div className="flex items-center justify-end gap-1.5 shrink-0 mac-no-drag">
+            {/* Quick Spotlight Trigger Button */}
             <button
               onClick={openSpotlight}
               title="Search Topics & Cases (⌘K)"
-              className="flex 2xl:hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/50 hover:bg-black/70 border border-white/10 hover:border-emerald-400/40 text-slate-300 hover:text-white cursor-pointer transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/50 hover:bg-black/70 border border-white/10 hover:border-emerald-400/40 text-slate-300 hover:text-white cursor-pointer transition-all shrink-0"
             >
               <Search className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-[11px] font-medium text-slate-300 hidden sm:inline">Search</span>
+              <span className="text-[11px] font-medium text-slate-300 hidden md:inline">Search</span>
               <kbd className="inline-flex items-center px-1 py-0.2 rounded text-[9px] font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/25">
                 ⌘K
               </kbd>
             </button>
 
             {/* Study Goal Switcher: Revision vs Study (Compact Segmented Pill) */}
-            <div className="flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs">
+            <div className="flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs shrink-0">
               <button
                 onClick={() => setStudyGoal("revise")}
                 title="Pre-lesson cramming, exam traps & active recall"
@@ -372,42 +354,14 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               </button>
             </div>
 
-            {/* Academic & Professional Typography Switcher (Shown on wide monitors) */}
-            <div className="hidden 2xl:flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs">
-              <span className="pl-2 text-slate-400 flex items-center">
-                <BookA className="w-3 h-3 text-emerald-400" />
-              </span>
-              <select
-                value={currentAcademicFont}
-                onChange={(e) => {
-                  const val = e.target.value as AcademicStyle;
-                  setAcademicStyle(val);
-                  setHandwrittenStyle(val);
-                }}
-                title="Academic & Professional Typography Selection"
-                className="bg-transparent text-[11px] font-bold text-emerald-200 border-none rounded-full px-2 py-1 focus:outline-none cursor-pointer"
-              >
-                <option value="newsreader" className="bg-slate-900 text-white">
-                  🎓 Newsreader
-                </option>
-                <option value="garamond" className="bg-slate-900 text-white">
-                  🏛️ Garamond
-                </option>
-                <option value="jakarta" className="bg-slate-900 text-white">
-                  🔬 Jakarta
-                </option>
-              </select>
-            </div>
-
             {/* Timed Exam Sprint Button */}
             <button
               onClick={openExamSprint}
               title="Launch Timed Exam Sprint (⌘E)"
-              className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-400/35 hover:bg-emerald-500/25 shadow-sm soft-button shrink-0"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-400/35 hover:bg-emerald-500/25 shadow-sm soft-button shrink-0"
             >
               <Timer className="w-3.5 h-3.5 text-emerald-300 animate-pulse" />
-              <span className="hidden 2xl:inline text-[11px]">Sprint</span>
-              <span className="text-[10px] font-mono text-emerald-400/70">⌘E</span>
+              <span className="text-[10px] font-mono text-emerald-400/80">⌘E</span>
             </button>
 
             {/* Pro Analytical Inspector Toggle (Shown only when tucked away to prevent collision) */}
@@ -415,26 +369,10 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <button
                 onClick={toggleInspector}
                 title="Unfold Analytical Inspector from Top Navigation Bar (⌘I)"
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border soft-button shrink-0 bg-emerald-950/60 text-emerald-300 border-emerald-400/40 tucked-pill-beacon-emerald"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border soft-button shrink-0 bg-emerald-950/60 text-emerald-300 border-emerald-400/40 tucked-pill-beacon-emerald"
               >
                 <Briefcase className="w-3.5 h-3.5 text-emerald-300" />
-                <span className="hidden sm:inline text-[11px]">Inspector</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-emerald-400/20 text-[9px] font-mono text-emerald-200 uppercase tracking-wider font-semibold border border-emerald-300/30">
-                  Tucked
-                </span>
-                <span className="text-[10px] font-mono text-emerald-400/70">⌘I</span>
-              </button>
-            )}
-
-            {/* Interactive App Tour / Walkthrough */}
-            {onOpenWalkthrough && (
-              <button
-                onClick={onOpenWalkthrough}
-                title="Interactive App Walkthrough & Guide (Tour)"
-                className="hidden 2xl:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-400/35 shadow-sm soft-button shrink-0"
-              >
-                <Compass className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[11px]">Tour</span>
+                <span className="text-[10px] font-mono text-emerald-400/80">⌘I</span>
               </button>
             )}
 
@@ -454,7 +392,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
         {/* ========================================================================= */}
         <nav
           aria-label="Integrated Main Sections Bar"
-          className="w-full grid grid-cols-5 gap-1 sm:gap-1.5 p-1 bg-black/50 border border-white/10 rounded-2xl shadow-inner relative"
+          className="w-full grid grid-cols-5 gap-1 p-1 bg-black/50 border border-white/10 rounded-2xl shadow-inner relative max-w-full overflow-hidden"
         >
           {navModes.map((mode) => {
             const isActive = viewMode === mode.id;
@@ -462,7 +400,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <button
                 key={mode.id}
                 onClick={() => setViewMode(mode.id)}
-                className={`relative col-span-1 flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-1 rounded-xl text-xs font-bold transition-colors cursor-pointer truncate ${
+                className={`relative col-span-1 flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-1 rounded-xl text-xs font-bold transition-colors cursor-pointer min-w-0 overflow-hidden ${
                   isActive
                     ? "text-emerald-200"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -478,8 +416,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                 <span className={`relative z-10 ${isActive ? "text-emerald-300 shrink-0" : "text-slate-400 shrink-0"}`}>
                   {mode.icon}
                 </span>
-                <span className="relative z-10 hidden 2xl:inline truncate">{mode.label}</span>
-                <span className="relative z-10 inline 2xl:hidden truncate">{mode.shortLabel}</span>
+                <span className="relative z-10 text-xs truncate">{mode.shortLabel}</span>
               </button>
             );
           })}
