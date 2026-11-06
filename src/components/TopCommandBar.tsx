@@ -23,6 +23,7 @@ import {
   Briefcase,
   SlidersHorizontal,
   PanelLeft,
+  Compass,
 } from "lucide-react";
 import { ALL_TOPICS, TOTAL_TOPICS_COUNT } from "@/data";
 import { useStudyStore, ViewMode, AcademicStyle } from "@/store/useStudyStore";
@@ -32,10 +33,12 @@ import { IBBusinessAppLogo } from "./IBBusinessAppLogo";
 
 interface TopCommandBarProps {
   onOpenDiagnostics?: () => void;
+  onOpenWalkthrough?: () => void;
 }
 
 export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
   onOpenDiagnostics,
+  onOpenWalkthrough,
 }) => {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isMobileOptionsOpen, setIsMobileOptionsOpen] = useState(false);
@@ -414,6 +417,18 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               </button>
             )}
 
+            {/* Interactive App Tour / Walkthrough */}
+            {onOpenWalkthrough && (
+              <button
+                onClick={onOpenWalkthrough}
+                title="Interactive App Walkthrough & Guide (Tour)"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-400/35 shadow-sm soft-button shrink-0"
+              >
+                <Compass className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden xl:inline text-[11px]">Tour</span>
+              </button>
+            )}
+
             {/* Native Shortcuts Cheatsheet Guide (?) */}
             <button
               onClick={() => setIsShortcutsOpen((prev) => !prev)}
@@ -491,6 +506,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
           onClose={() => setIsShortcutsOpen(false)}
           appName="IB Business Codex"
           accentColor="#10b981"
+          onOpenTour={onOpenWalkthrough}
         />
       </header>
 

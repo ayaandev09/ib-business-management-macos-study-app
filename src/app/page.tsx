@@ -14,6 +14,7 @@ import { ActiveRecallRevisionView } from "@/components/ActiveRecallRevisionView"
 import { FloatingBottomDock } from "@/components/FloatingBottomDock";
 import { StartupDiagnosticsOverlay } from "@/components/StartupDiagnosticsOverlay";
 import { CinematicStartupIntro } from "@/components/CinematicStartupIntro";
+import { ImmersiveAppWalkthrough } from "@/components/ImmersiveAppWalkthrough";
 import { BusinessRightInspector } from "@/components/BusinessRightInspector";
 import { TimedExamSprintModal } from "@/components/TimedExamSprintModal";
 import { LiveDiagnosticsModal } from "@/components/LiveDiagnosticsModal";
@@ -63,14 +64,22 @@ export default function IBBusinessManagementStudyDashboardPage() {
     toggleExamSprint,
     isSpotlightOpen,
     closeSpotlight,
+    setStudyGoal,
   } = useStudyStore();
 
   const [isStartupActive, setIsStartupActive] = useState(true);
   const [showMainUI, setShowMainUI] = useState(false);
+  const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
 
   const handleStartupComplete = useCallback(() => {
     setIsStartupActive(false);
     setShowMainUI(true);
+    if (typeof window !== "undefined") {
+      const hasSeen = localStorage.getItem("hasSeenAppWalkthrough_bm_v1");
+      if (!hasSeen) {
+        setIsWalkthroughOpen(true);
+      }
+    }
   }, []);
 
   const [liveDiagOpen, setLiveDiagOpen] = useState(false);
@@ -258,7 +267,10 @@ export default function IBBusinessManagementStudyDashboardPage() {
         <main className="flex-1 min-w-0 w-full pb-36">
           {/* Top Command & View Switcher Long Bar */}
           <WidgetBridge />
-          <TopCommandBar onOpenDiagnostics={() => setLiveDiagOpen(true)} />
+          <TopCommandBar
+            onOpenDiagnostics={() => setLiveDiagOpen(true)}
+            onOpenWalkthrough={() => setIsWalkthroughOpen(true)}
+          />
 
           {/* Mini Homepage & Live Widget Telemetry Hub */}
           <StudyMiniHomepage />
@@ -487,6 +499,13 @@ export default function IBBusinessManagementStudyDashboardPage() {
     <JellySpotlightModal
       isOpen={isSpotlightOpen}
       onClose={closeSpotlight}
+    />
+
+    {/* Immersive Onboarding Walkthrough Tour */}
+    <ImmersiveAppWalkthrough
+      isOpen={isWalkthroughOpen}
+      onClose={() => setIsWalkthroughOpen(false)}
+      onSelectGoal={(goal) => setStudyGoal(goal)}
     />
     </>
   );
