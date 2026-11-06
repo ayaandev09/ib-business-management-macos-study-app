@@ -1,16 +1,41 @@
 "use client";
 
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
 import { FloatingSidebar } from "@/components/FloatingSidebar";
 import { TopCommandBar } from "@/components/TopCommandBar";
+import { WidgetBridge } from "@/components/WidgetBridge";
+import { StudyMiniHomepage } from "@/components/StudyMiniHomepage";
+import { CuegisSandbox } from "@/components/CuegisSandbox";
 import { TopicBentoCard } from "@/components/TopicBentoCard";
 import { ThemeMatrixView } from "@/components/ThemeMatrixView";
 import { LexiconDossierView } from "@/components/LexiconDossierView";
+import { ActiveRecallRevisionView } from "@/components/ActiveRecallRevisionView";
 import { FloatingBottomDock } from "@/components/FloatingBottomDock";
-import { IPhone16eShell } from "@/components/IPhone16eShell";
+import { StartupDiagnosticsOverlay } from "@/components/StartupDiagnosticsOverlay";
+import { CinematicStartupIntro } from "@/components/CinematicStartupIntro";
+import { BusinessRightInspector } from "@/components/BusinessRightInspector";
+import { TimedExamSprintModal } from "@/components/TimedExamSprintModal";
+import { LiveDiagnosticsModal } from "@/components/LiveDiagnosticsModal";
+import { JellySpotlightModal } from "@/components/JellySpotlightModal";
+import { ChromaticButton } from "@/components/chromatic-button";
 import { ALL_TOPICS, SYLLABUS_UNITS, UnitId } from "@/data";
 import { useStudyStore } from "@/store/useStudyStore";
-import { Sparkles, Layers, SearchX } from "lucide-react";
+import {
+  initLiveSyncConnection,
+  decodeSyncFromUrl,
+  pullSyncFromServer,
+} from "@/lib/syncService";
+import {
+  CheckCircle2,
+  ArrowRight,
+  BookOpen,
+  Monitor,
+  Sparkles,
+  Layers,
+  SearchX,
+  X,
+} from "lucide-react";
 
 export default function IBBusinessManagementStudyDashboardPage() {
   const {
@@ -23,32 +48,132 @@ export default function IBBusinessManagementStudyDashboardPage() {
     setActiveUnitFilter,
     deviceMode,
     setDeviceMode,
+    completedTopics,
+    toggleTopicComplete,
+    goToNextTopic,
+    academicStyle,
+    handwrittenStyle,
+    syncToastMessage,
+    setSyncToastMessage,
+    hydrateFromSyncPayload,
+    isInspectorOpen,
+    toggleInspector,
+    isExamSprintActive,
+    closeExamSprint,
+    toggleExamSprint,
+    isSpotlightOpen,
+    closeSpotlight,
   } = useStudyStore();
 
-  // Detect URL parameter ?view=mac or ?view=iphone
+  const [isStartupActive, setIsStartupActive] = useState(true);
+  const [showMainUI, setShowMainUI] = useState(false);
+
+  const handleStartupComplete = useCallback(() => {
+    setIsStartupActive(false);
+    setShowMainUI(true);
+  }, []);
+
+  const [liveDiagOpen, setLiveDiagOpen] = useState(false);
+  const [forceStartupDiag, setForceStartupDiag] = useState(false);
+
+  // Synchronize universal academic professional font attribute (Oxford / Garamond / Jakarta)
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const activeFont = academicStyle || handwrittenStyle || "newsreader";
+      document.documentElement.setAttribute("data-academic-font", activeFont);
+      document.documentElement.setAttribute("data-handwritten-style", activeFont);
+    }
+  }, [academicStyle, handwrittenStyle]);
+
+  // Global Keyboard Shortcut: Cmd/Ctrl + I to toggle Analytical Inspector, Cmd/Ctrl + E to toggle Exam Sprint
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+        toggleInspector();
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "e") {
+        e.preventDefault();
+        toggleExamSprint();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [toggleInspector, toggleExamSprint]);
+
+  // Live Sync connection
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const viewParam = params.get("view");
-      if (viewParam === "mac") {
-        setDeviceMode("mac");
-      } else if (viewParam === "iphone" || viewParam === "iphone16e") {
-        setDeviceMode("iphone16e");
+      const syncId = params.get("syncId") || params.get("sync");
+
+      // Fetch live sync if sync parameter provided
+      if (syncId) {
+        const decoded = decodeSyncFromUrl(syncId);
+        if (decoded) {
+          hydrateFromSyncPayload(decoded as any);
+        } else {
+          pullSyncFromServer().then((remote) => {
+            if (remote) hydrateFromSyncPayload(remote as any);
+          });
+        }
+      } else {
+        pullSyncFromServer().then((remote) => {
+          if (remote) hydrateFromSyncPayload(remote as any);
+        });
       }
     }
-  }, [setDeviceMode]);
+
+    const disconnectSync = initLiveSyncConnection((incoming) => {
+      hydrateFromSyncPayload(incoming as any);
+    });
+
+    return () => {
+      disconnectSync();
+    };
+  }, [hydrateFromSyncPayload]);
+
+  // Auto-dismiss sync toast after 4s
+  useEffect(() => {
+    if (syncToastMessage) {
+      const timer = setTimeout(() => {
+        setSyncToastMessage(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [syncToastMessage, setSyncToastMessage]);
 
   const activeTopic = useMemo(
     () => ALL_TOPICS.find((t) => t.id === activeTopicId) || ALL_TOPICS[0],
     [activeTopicId]
   );
 
+  const activeUnit = useMemo(
+    () =>
+      SYLLABUS_UNITS.find((u) => u.id === activeTopic.unitId) ||
+      SYLLABUS_UNITS[0],
+    [activeTopic.unitId]
+  );
+
+  const currentTopicIndex = useMemo(
+    () => ALL_TOPICS.findIndex((t) => t.id === activeTopic.id),
+    [activeTopic.id]
+  );
+
+  const nextTopic = useMemo(
+    () =>
+      currentTopicIndex >= 0 && currentTopicIndex < ALL_TOPICS.length - 1
+        ? ALL_TOPICS[currentTopicIndex + 1]
+        : null,
+    [currentTopicIndex]
+  );
+
   const filteredTopics = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return ALL_TOPICS.filter((t) => {
-      const matchesUnit =
-        activeUnitFilter === "all" || t.unitId === activeUnitFilter;
-      if (!matchesUnit) return false;
+      // Global search across all units when query is active
+      if (!q && activeUnitFilter !== "all" && t.unitId !== activeUnitFilter) {
+        return false;
+      }
       if (!q) return true;
 
       const inHeader =
@@ -78,177 +203,211 @@ export default function IBBusinessManagementStudyDashboardPage() {
     });
   }, [searchQuery, activeUnitFilter]);
 
-  // If in iPhone 16e device mode, render the dedicated mobile shell
-  if (deviceMode === "iphone16e") {
-    return <IPhone16eShell />;
-  }
+  // When searching in focus mode, automatically sync active topic to first search match
+  useEffect(() => {
+    if (searchQuery.trim() && filteredTopics.length > 0) {
+      if (!filteredTopics.some((t) => t.id === activeTopicId)) {
+        setActiveTopic(filteredTopics[0].id);
+      }
+    }
+  }, [searchQuery, filteredTopics, activeTopicId, setActiveTopic]);
 
   return (
-    <div className="relative min-h-screen pb-28">
-      {/* =====================================================================
-          AMBIENT LIQUID GLASS LIGHT BLOBS
-          ===================================================================== */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div
-          className="absolute -top-40 left-1/4 w-[650px] h-[650px] rounded-full blur-[150px] opacity-20"
-          style={{
-            background: "radial-gradient(circle, #0ea5e9, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute top-1/3 -right-32 w-[600px] h-[600px] rounded-full blur-[160px] opacity-20"
-          style={{
-            background: "radial-gradient(circle, #a855f7, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute -bottom-48 left-1/3 w-[700px] h-[700px] rounded-full blur-[170px] opacity-15"
-          style={{
-            background: "radial-gradient(circle, #10b981, transparent 70%)",
-          }}
-        />
-      </div>
+    <>
+      {/* 1. Bulletproof Zero-Latency Liquid Glass Startup Animation */}
+      <AnimatePresence>
+        {isStartupActive && (
+          <CinematicStartupIntro
+            isOpen={isStartupActive}
+            onClose={handleStartupComplete}
+            onComplete={handleStartupComplete}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* 2. Main Study Dashboard - Buttery Liquid Glass reveal into main view */}
+      <div
+        className={`mac-dashboard-shell transition-opacity duration-700 ease-out ${
+          showMainUI
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none select-none"
+        }`}
+      >
+        {/* Live Sync Toast Banner */}
+      {syncToastMessage && (
+        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 max-w-[92%] px-4 py-2.5 rounded-full bg-emerald-500/25 border border-emerald-400/50 text-emerald-200 backdrop-blur-2xl shadow-2xl flex items-center gap-2 text-xs animate-in fade-in slide-in-from-top-4 duration-300">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span className="font-semibold">{syncToastMessage}</span>
+          <button
+            onClick={() => setSyncToastMessage(null)}
+            className="ml-1 p-0.5 rounded text-emerald-300 hover:text-white cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* =====================================================================
-          MAIN LIQUID GLASS SHELL WORKSPACE (MAC DESKTOP)
+          MAIN SHELL CONTAINER (MAC WIDESCREEN DASHBOARD)
           ===================================================================== */}
-      <div className="relative z-10 max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <div className="flex flex-col lg:flex-row items-start gap-6">
-          {/* Left Sticky Liquid Glass Navigation Sidebar */}
-          <FloatingSidebar />
+      <div className="relative z-10 w-full flex flex-col lg:flex-row gap-4 xl:gap-5 items-start">
+        {/* Left Floating Sidebar */}
+        <FloatingSidebar isMobileSheet={false} />
 
-          {/* Main Content Column */}
-          <main className="flex-1 min-w-0 w-full">
-            <TopCommandBar />
+        {/* Right Main Content Workspace */}
+        <main className="flex-1 min-w-0 w-full pb-36">
+          {/* Top Command & View Switcher Long Bar */}
+          <WidgetBridge />
+          <TopCommandBar onOpenDiagnostics={() => setLiveDiagOpen(true)} />
 
-            {/* If user is actively typing a search query while in single Bento mode, show matching scene pills */}
-            {searchQuery.trim() && viewMode === "focus" && (
-              <div className="liquid-glass-bento rounded-2xl p-4 mb-5 border border-sky-400/30">
-                <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="font-mono text-xs text-sky-300 flex items-center gap-1.5 font-bold">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Search Matches Across All 52 Topics ({filteredTopics.length})
-                  </span>
-                  <span className="text-[11px] text-slate-400 font-mono">
-                    Click a pill to jump
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {filteredTopics.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setActiveTopic(t.id)}
-                      className={`px-3 py-1 rounded-xl text-xs font-mono transition-all cursor-pointer ${
-                        t.id === activeTopicId
-                          ? "bg-sky-400 text-slate-950 font-bold"
-                          : "liquid-glass-pill text-slate-300 hover:text-white"
-                      }`}
-                    >
-                      {t.displayCode}: {t.title.split(":")[0]}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* Mini Homepage & Live Widget Telemetry Hub */}
+          <StudyMiniHomepage />
 
-            {/* ===============================================================
-                MODE 1: FOCUS / BENTO CARD VIEW (FLAGSHIP)
-                =============================================================== */}
+          {/* =====================================================================
+              BUTTER-SMOOTH VIEW CONTENT WORKSPACE
+              ===================================================================== */}
+          <div key={viewMode} className="liquid-view-enter">
+            {/* ==================== VIEW 1: FOCUS TOPIC BENTO ==================== */}
             {viewMode === "focus" && (
-              <TopicBentoCard topic={activeTopic} />
-            )}
-
-            {/* ===============================================================
-                MODE 2: CONTINUOUS FLOW / STREAM VIEW
-                =============================================================== */}
-            {viewMode === "stream" && (
-              <div className="space-y-6">
-                {/* Stream Header & Unit Filter Pills */}
-                <div className="liquid-glass-bento rounded-3xl p-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                    <div>
-                      <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                        <Layers className="w-5 h-5 text-sky-400" />
-                        Continuous Flow Stream ({filteredTopics.length} Topics)
-                      </h2>
-                      <p className="text-xs text-slate-400">
-                        Smooth vertical feed of all IB Business Management HL topics and toolkit models.
-                      </p>
+              <div className="space-y-4">
+                {/* Syllabus Unit Context Banner - 100% Full-Width Bulletproof Native Card */}
+                <div className="liquid-glass-bento rounded-3xl p-5 mb-5 border border-white/15 shadow-xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
+                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-sky-300">
+                      <BookOpen className="w-4 h-4 shrink-0 text-sky-400" />
+                      <span className="font-bold text-sm text-white">{activeUnit.title}</span>
                     </div>
-
-                    <div className="flex flex-wrap gap-1.5">
-                      {(
-                        [
-                          { id: "all", label: "All Units (52)" },
-                          { id: "unit-1", label: "Unit 1 (6)" },
-                          { id: "unit-2", label: "Unit 2 (7)" },
-                          { id: "unit-3", label: "Unit 3 (9)" },
-                          { id: "unit-4", label: "Unit 4 (6)" },
-                          { id: "unit-5", label: "Unit 5 (9)" },
-                          { id: "bmt", label: "Toolkit (15)" },
-                        ] as { id: UnitId | "all"; label: string }[]
-                      ).map((tab) => (
-                        <button
-                          key={tab.id}
-                          onClick={() => setActiveUnitFilter(tab.id)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
-                            activeUnitFilter === tab.id
-                              ? "liquid-glass-pill-active text-white"
-                              : "liquid-glass-pill text-slate-300"
-                          }`}
-                        >
-                          {tab.label}
-                        </button>
-                      ))}
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-400/15 text-sky-300 border border-sky-400/30">
+                        {activeUnit.badge}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono text-slate-300 border border-white/10 bg-white/5">
+                        {activeUnit.topics.length} Topics
+                      </span>
                     </div>
                   </div>
 
-                  {/* Units Overviews Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                    {SYLLABUS_UNITS.map((u) => (
-                      <div
-                        key={u.id}
-                        className="p-3.5 rounded-2xl bg-slate-950/55 border border-white/10"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-mono text-[11px] font-bold text-sky-300 uppercase">
-                            {u.badge}
-                          </span>
-                          <span className="font-mono text-[10px] text-slate-400">
-                            {u.topics.length} Topics
-                          </span>
-                        </div>
-                        <p className="text-xs font-semibold text-white mb-1 line-clamp-1">
-                          {u.title}
-                        </p>
-                        <p className="text-[11px] text-slate-300 leading-relaxed mb-2 line-clamp-3">
-                          {u.overview}
-                        </p>
-                        <p className="text-[10px] font-mono text-purple-300/90 line-clamp-1">
-                          {u.strategicArc}
-                        </p>
+                  <p className="text-xs sm:text-sm text-slate-200/90 leading-relaxed w-full">
+                    {activeUnit.overview}
+                  </p>
+                </div>
+
+                {/* Active Topic Bento Grid with Buttery Smooth Swap */}
+                <div key={activeTopic.id} className="liquid-chapter-swap">
+                  <TopicBentoCard
+                    topic={activeTopic}
+                    isDeferred={false}
+                    showPrevNextControls={true}
+                  />
+                </div>
+
+                {/* Seamless Next-Topic Speed-Read Transition Footer */}
+                {nextTopic && (
+                  <div className="liquid-glass-bento rounded-3xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <div className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">
+                        Up Next in Your Speed-Read Queue
                       </div>
+                      <div className="text-base sm:text-lg font-bold text-white">
+                        {nextTopic.displayCode}: {nextTopic.title}
+                      </div>
+                      <div className="text-xs text-sky-300">
+                        {nextTopic.subtitle}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <ChromaticButton
+                        onClick={() => {
+                          if (!completedTopics[activeTopic.id]) {
+                            toggleTopicComplete(activeTopic.id);
+                          }
+                          goToNextTopic();
+                          window.scrollTo(0, 0);
+                        }}
+                        color="#00802f"
+                        colorMode="spectrum"
+                        speed={0.7}
+                        paused={false}
+                        phase={0}
+                        feather={100}
+                        projectionScale={174.7}
+                        intensity={1.4}
+                        grain={0.105}
+                        seed={7}
+                        borderRadius={50}
+                        hoverEffect="brighten"
+                        entrance="blur-up"
+                        entranceSpeed={1}
+                        entranceBlur={10}
+                        entranceDistance={20}
+                        entranceScale={0.65}
+                        className="!min-w-[240px] !h-12 !px-6 !text-xs font-bold shadow-xl cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-300 mr-2" />
+                        <span>Complete {activeTopic.displayCode} &amp; Continue</span>
+                        <ArrowRight className="w-4 h-4 text-white ml-2" />
+                      </ChromaticButton>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ==================== VIEW 2: CONTINUOUS FLOW STREAM ==================== */}
+            {viewMode === "stream" && (
+              <div className="space-y-6">
+                {/* Unit Filter Bar */}
+                <div className="liquid-glass-bento rounded-3xl p-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-base font-bold text-white flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-sky-400" />
+                      Continuous Flow Stream ({filteredTopics.length} Topics)
+                    </h2>
+                    <p className="text-xs text-slate-400">
+                      All syllabus topics rendered in a continuous feed with WebKit GPU &amp;{" "}
+                      <code className="text-sky-300">content-visibility: auto</code>{" "}
+                      optimization.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {(
+                      [
+                        { id: "all", label: "All Units (52)" },
+                        { id: "unit-1", label: "Unit 1 (6)" },
+                        { id: "unit-2", label: "Unit 2 (7)" },
+                        { id: "unit-3", label: "Unit 3 (9)" },
+                        { id: "unit-4", label: "Unit 4 (6)" },
+                        { id: "unit-5", label: "Unit 5 (9)" },
+                        { id: "bmt", label: "Toolkit (15)" },
+                      ] as const
+                    ).map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveUnitFilter(tab.id as UnitId | "all")}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+                          activeUnitFilter === tab.id
+                            ? "bg-sky-500/30 text-white border border-sky-400/50"
+                            : "liquid-glass-pill text-slate-300 hover:text-white"
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* All Matching Topic Cards */}
-                {filteredTopics.length > 0 ? (
-                  filteredTopics.map((t, idx) => (
-                    <TopicBentoCard
-                      key={t.id}
-                      topic={t}
-                      isDeferred={idx > 0}
-                    />
-                  ))
-                ) : (
-                  <div className="liquid-glass-bento rounded-3xl p-12 text-center">
-                    <SearchX className="w-8 h-8 text-rose-400 mx-auto mb-3" />
-                    <h3 className="text-base font-bold text-white mb-1">
-                      No Topics Match Your Filter
-                    </h3>
+                {/* Render Topic Bento Cards */}
+                {filteredTopics.length === 0 ? (
+                  <div className="liquid-glass-bento rounded-3xl p-10 text-center">
+                    <SearchX className="w-8 h-8 text-rose-400 mx-auto mb-2" />
+                    <p className="text-base font-semibold text-white mb-1">
+                      No topics matched &ldquo;{searchQuery}&rdquo;
+                    </p>
                     <p className="text-xs text-slate-400 mb-4">
-                      Try clearing your search query or switching back to All Units.
+                      Try searching for &ldquo;Ansoff&rdquo;, &ldquo;Break-Even&rdquo;,
+                      &ldquo;Cash Flow&rdquo;, or &ldquo;Critical Path&rdquo;.
                     </p>
                     <button
                       onClick={() => {
@@ -260,27 +419,75 @@ export default function IBBusinessManagementStudyDashboardPage() {
                       Reset Filters
                     </button>
                   </div>
+                ) : (
+                  filteredTopics.map((t, idx) => (
+                    <TopicBentoCard
+                      key={t.id}
+                      topic={t}
+                      isDeferred={idx > 0}
+                      showPrevNextControls={false}
+                    />
+                  ))
                 )}
               </div>
             )}
 
-            {/* ===============================================================
-                MODE 3: CONCEPT & BMT MATRIX VIEW
-                =============================================================== */}
-            {viewMode === "matrix" && <ThemeMatrixView />}
+            {/* ==================== VIEW 3: CONCEPT & BMT MATRIX ==================== */}
+            {viewMode === "matrix" && (
+              <div className="space-y-5">
+                <ThemeMatrixView />
+                <CuegisSandbox />
+              </div>
+            )}
 
-            {/* ===============================================================
-                MODE 4: FORMULAS, THEORISTS & GLOSSARY DOSSIER
-                =============================================================== */}
+            {/* ==================== VIEW 4: GLOSSARY, FORMULAS & THEORISTS ==================== */}
             {viewMode === "lexicon" && <LexiconDossierView />}
-          </main>
-        </div>
+
+            {/* ==================== VIEW 5: ACTIVE RECALL REVISION & EXAM HUB ==================== */}
+            {viewMode === "revision" && <ActiveRecallRevisionView />}
+          </div>
+        </main>
+
+        {/* Right Sticky Liquid Glass Analytical Inspector */}
+        <BusinessRightInspector
+          topic={activeTopic}
+          isOpen={isInspectorOpen}
+          onToggle={toggleInspector}
+        />
       </div>
 
+
+
       {/* =====================================================================
-          FLOATING LIQUID GLASS BOTTOM DOCK
+          STARTUP DIAGNOSTICS & TELEMETRY OVERLAY
           ===================================================================== */}
-      <FloatingBottomDock />
+      <StartupDiagnosticsOverlay
+        forceOpen={forceStartupDiag}
+        onClose={() => setForceStartupDiag(false)}
+      />
+
+      {/* =====================================================================
+          PERSISTENT LIVE SYSTEM DIAGNOSTICS MODAL
+          ===================================================================== */}
+      <LiveDiagnosticsModal
+        isOpen={liveDiagOpen}
+        onClose={() => setLiveDiagOpen(false)}
+        onRebootDiagnostics={() => setForceStartupDiag(true)}
+      />
     </div>
+
+    {/* Timed Exam Sprint Full-Screen Simulation Modal */}
+    <TimedExamSprintModal
+      isOpen={isExamSprintActive}
+      onClose={closeExamSprint}
+      topic={activeTopic}
+    />
+
+    {/* Flagship Spacious Jelly Spotlight Command Palette */}
+    <JellySpotlightModal
+      isOpen={isSpotlightOpen}
+      onClose={closeSpotlight}
+    />
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   FORMULA_BANK,
   THEORISTS_DOSSIER,
@@ -11,6 +11,7 @@ import {
 } from "@/data";
 import { useStudyStore } from "@/store/useStudyStore";
 import { MathFormula } from "./MathFormula";
+import { CSuiteDecisionSandbox } from "./CSuiteDecisionSandbox";
 import {
   Calculator,
   Users,
@@ -24,7 +25,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-type DossierTab = "formulas" | "theorists" | "glossary";
+type DossierTab = "csuite" | "formulas" | "theorists" | "glossary";
 
 const ALPHABET = [
   "ALL",
@@ -67,14 +68,20 @@ const UNIT_FILTERS = [
   { id: "Command Terms", label: "IB Command Terms" },
 ];
 
-export function LexiconDossierView() {
-  const { searchQuery } = useStudyStore();
-  const [activeTab, setActiveTab] = useState<DossierTab>("formulas");
+export const LexiconDossierView = React.memo(function LexiconDossierView() {
+  const searchQuery = useStudyStore((state) => state.searchQuery);
+  const [activeTab, setActiveTab] = useState<DossierTab>("csuite");
   const [selectedLetter, setSelectedLetter] = useState<string>("ALL");
   const [selectedUnit, setSelectedUnit] = useState<string>("ALL");
   const [hlOnlyFilter, setHlOnlyFilter] = useState<boolean>(false);
+  const [displayCount, setDisplayCount] = useState<number>(40);
 
   const q = searchQuery.trim().toLowerCase();
+
+  // Reset pagination when any filter changes
+  useEffect(() => {
+    setDisplayCount(40);
+  }, [q, selectedLetter, selectedUnit, hlOnlyFilter]);
 
   const filteredFormulas = useMemo(() => {
     return FORMULA_BANK.filter(
@@ -139,6 +146,10 @@ export function LexiconDossierView() {
     });
   }, [q, selectedLetter, selectedUnit, hlOnlyFilter]);
 
+  const visibleGlossary = useMemo(() => {
+    return filteredGlossary.slice(0, displayCount);
+  }, [filteredGlossary, displayCount]);
+
   return (
     <div className="space-y-6">
       {/* =====================================================================
@@ -159,7 +170,18 @@ export function LexiconDossierView() {
           </div>
 
           {/* Sub-Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-950/70 border border-white/10">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-slate-950/70 border border-white/10">
+            <button
+              onClick={() => setActiveTab("csuite")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+                activeTab === "csuite"
+                  ? "bg-gradient-to-r from-emerald-500/30 to-teal-500/30 border border-emerald-400/50 text-emerald-200 shadow-md"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span>C-Suite Decision &amp; Quant Lab</span>
+            </button>
             <button
               onClick={() => setActiveTab("formulas")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
@@ -196,6 +218,11 @@ export function LexiconDossierView() {
           </div>
         </div>
       </section>
+
+      {/* =====================================================================
+          TAB 0: C-SUITE EXECUTIVE DECISION & QUANTITATIVE SANDBOX
+          ===================================================================== */}
+      {activeTab === "csuite" && <CSuiteDecisionSandbox />}
 
       {/* =====================================================================
           TAB 1: FORMULAS BANK
@@ -399,8 +426,8 @@ export function LexiconDossierView() {
             {/* Results Counter / Source Attribution */}
             <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1">
               <span>
-                Showing <strong className="text-sky-300">{filteredGlossary.length}</strong> of{" "}
-                {GLOSSARY_TERMS.length} official textbook definitions
+                Showing <strong className="text-sky-300">{visibleGlossary.length}</strong> of{" "}
+                <strong className="text-white">{filteredGlossary.length}</strong> matching terms ({GLOSSARY_TERMS.length} total)
               </span>
               <span className="text-slate-500">
                 Paul Hoang 5th Edition (2022 Syllabus)
@@ -428,42 +455,62 @@ export function LexiconDossierView() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredGlossary.map((g, idx) => (
-                <div
-                  key={`${g.term}-${idx}`}
-                  className="liquid-glass-bento rounded-3xl p-5 space-y-3 border border-white/10 hover:border-sky-400/35 transition-all group"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-sm font-bold text-white group-hover:text-sky-200 transition-colors">
-                      {g.term}
-                    </h3>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-400/25">
-                        {g.unit}
-                      </span>
-                      {g.hlOnly && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-400/30 font-semibold">
-                          HL
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {visibleGlossary.map((g, idx) => (
+                  <div
+                    key={`${g.term}-${idx}`}
+                    className="liquid-glass-bento rounded-3xl p-5 space-y-3 border border-white/10 hover:border-sky-400/35 transition-all group glossary-term-card"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="text-sm font-bold text-white group-hover:text-sky-200 transition-colors">
+                        {g.term}
+                      </h3>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-400/25">
+                          {g.unit}
                         </span>
-                      )}
+                        {g.hlOnly && (
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-400/30 font-semibold">
+                            HL
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-200 leading-relaxed font-sans">
+                      {g.definition}
+                    </p>
+
+                    <div className="p-2.5 rounded-xl bg-slate-950/70 border border-amber-400/20 text-xs text-amber-200/95 font-mono shadow-inner">
+                      <span className="text-amber-400 font-bold">IB Exam Guidance: </span>
+                      {g.examTip}
                     </div>
                   </div>
+                ))}
+              </div>
 
-                  <p className="text-xs text-slate-200 leading-relaxed font-sans">
-                    {g.definition}
-                  </p>
-
-                  <div className="p-2.5 rounded-xl bg-slate-950/70 border border-amber-400/20 text-xs text-amber-200/95 font-mono shadow-inner">
-                    <span className="text-amber-400 font-bold">IB Exam Guidance: </span>
-                    {g.examTip}
-                  </div>
+              {/* Load More Pagination Bar */}
+              {filteredGlossary.length > visibleGlossary.length && (
+                <div className="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button
+                    onClick={() => setDisplayCount((prev) => prev + 40)}
+                    className="px-6 py-2.5 rounded-2xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-400/35 text-xs font-mono font-bold transition-all cursor-pointer shadow-md"
+                  >
+                    Load Next 40 Terms (Showing {visibleGlossary.length} of {filteredGlossary.length})
+                  </button>
+                  <button
+                    onClick={() => setDisplayCount(filteredGlossary.length)}
+                    className="px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-mono transition-all cursor-pointer"
+                  >
+                    Show All ({filteredGlossary.length})
+                  </button>
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>
       )}
     </div>
   );
-}
+});

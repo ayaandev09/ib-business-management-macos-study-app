@@ -1,163 +1,216 @@
 "use client";
 
-import React, { useRef } from "react";
-import { ALL_TOPICS } from "@/data";
-import { useStudyStore } from "@/store/useStudyStore";
+import React from "react";
 import {
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
   Circle,
   Zap,
-  ArrowUp,
+  ListFilter,
 } from "lucide-react";
+import { ALL_TOPICS, TOTAL_TOPICS_COUNT } from "@/data";
+import { useStudyStore } from "@/store/useStudyStore";
 
-export function FloatingBottomDock() {
+export const FloatingBottomDock: React.FC = React.memo(() => {
   const {
     activeTopicId,
     setActiveTopic,
-    viewMode,
-    setViewMode,
     completedTopics,
     toggleTopicComplete,
+    goToPrevTopic,
+    goToNextTopic,
     speedReadMode,
     toggleSpeedReadMode,
+    viewMode,
+    setViewMode,
+    deviceMode,
+    setUnitSheetOpen,
   } = useStudyStore();
 
-  const dockScrollRef = useRef<HTMLDivElement>(null);
-  const currentIndex = ALL_TOPICS.findIndex((t) => t.id === activeTopicId);
-  const currentTopic = ALL_TOPICS[currentIndex] || ALL_TOPICS[0];
-  const prevTopic = currentIndex > 0 ? ALL_TOPICS[currentIndex - 1] : null;
-  const nextTopic =
-    currentIndex < ALL_TOPICS.length - 1 ? ALL_TOPICS[currentIndex + 1] : null;
+  const currentIdx = ALL_TOPICS.findIndex((t) => t.id === activeTopicId);
+  const currentTopic = ALL_TOPICS[currentIdx] || ALL_TOPICS[0];
+  const isCurrentDone = !!completedTopics[currentTopic.id];
+  const totalDone = ALL_TOPICS.filter((t) => !!completedTopics[t.id]).length;
 
-  const isCompleted = !!completedTopics[currentTopic.id];
-
-  const navigateTo = (id: string) => {
-    setActiveTopic(id);
+  const jumpToUnitFirstTopic = (firstId: string) => {
+    setActiveTopic(firstId);
     if (viewMode !== "focus" && viewMode !== "stream") {
       setViewMode("focus");
     }
     if (viewMode === "stream") {
-      const el = document.getElementById(`topic-card-${id}`);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      document
+        .getElementById(`topic-card-${firstId}`)
+        ?.scrollIntoView({ behavior: "instant" });
     } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo(0, 0);
     }
   };
 
-  const UNIT_JUMPS = [
-    { label: "U1", title: "Unit 1", firstId: "u1-1" },
-    { label: "U2", title: "Unit 2", firstId: "u2-1" },
-    { label: "U3", title: "Unit 3", firstId: "u3-1" },
-    { label: "U4", title: "Unit 4", firstId: "u4-1" },
-    { label: "U5", title: "Unit 5", firstId: "u5-1" },
-    { label: "BMT", title: "Toolkit", firstId: "bmt-t1" },
-  ];
+  const prevTopic = currentIdx > 0 ? ALL_TOPICS[currentIdx - 1] : null;
+  const nextTopic = currentIdx < ALL_TOPICS.length - 1 ? ALL_TOPICS[currentIdx + 1] : null;
 
   return (
-    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-3xl pointer-events-none transition-all">
-      <div className="liquid-glass-dock rounded-full px-3 py-2 flex items-center justify-between gap-2 pointer-events-auto shadow-2xl">
-        {/* Horizontally Scrollable Dock Content */}
-        <div
-          ref={dockScrollRef}
-          tabIndex={0}
-          role="region"
-          aria-label="Study navigation dock"
-          className="flex items-center justify-between gap-2 w-full overflow-x-auto no-scrollbar touch-pan-x scroll-smooth overscroll-x-contain"
+    <div className="fixed bottom-[max(calc(env(safe-area-inset-bottom,0px)+0.6rem),1rem)] left-0 right-0 w-full flex justify-center items-center pointer-events-none z-40 px-3">
+      <nav
+        aria-label="Quick Topic & Unit Floating Dock"
+        className="liquid-glass-dock liquid-pulse-rim rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center justify-center gap-1.5 sm:gap-3 pointer-events-auto shadow-2xl backdrop-blur-2xl"
+      >
+        {/* Mobile Index Trigger */}
+        <button
+          onClick={() => setUnitSheetOpen(true)}
+          className="lg:hidden p-2 rounded-full liquid-glass-pill text-emerald-300 active:scale-90 cursor-pointer flex items-center justify-center min-w-[36px] min-h-[36px]"
+          title="Open Syllabus Index Sheet"
         >
-          {/* Previous Topic */}
-          <button
-            disabled={!prevTopic}
-            onClick={() => prevTopic && navigateTo(prevTopic.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 ${
-              prevTopic
-                ? "liquid-glass-pill text-slate-200 cursor-pointer"
-                : "opacity-35 cursor-not-allowed text-slate-500"
-            }`}
-            title={prevTopic ? `Previous: ${prevTopic.title}` : undefined}
-          >
-            <ChevronLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Prev</span>
-          </button>
+          <ListFilter className="w-4 h-4" />
+        </button>
 
-          {/* Unit Jump Pills */}
-          <div className="flex items-center gap-1 shrink-0 bg-slate-950/40 p-1 rounded-full border border-white/10">
-            {UNIT_JUMPS.map((uj) => (
-              <button
-                key={uj.label}
-                onClick={() => navigateTo(uj.firstId)}
-                title={`Jump to ${uj.title}`}
-                className="px-2.5 py-1 rounded-full text-[11px] font-mono text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-              >
-                {uj.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Current Topic Badge & Mastered Toggle */}
+        {/* Unit Quick-Jump Pills (Visible on Mac & Tablets) */}
+        <div className="hidden sm:flex items-center gap-1 pr-2 border-r border-white/15">
           <button
-            onClick={() => toggleTopicComplete(currentTopic.id)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono font-medium transition-all shrink-0 cursor-pointer ${
-              isCompleted
-                ? "bg-emerald-500/25 border border-emerald-400/50 text-emerald-200"
-                : "liquid-glass-pill text-slate-300"
+            onClick={() => jumpToUnitFirstTopic("u1-1")}
+            className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold transition-colors cursor-pointer ${
+              currentTopic.unitNumber === 1
+                ? "bg-sky-500/30 text-sky-200 border border-sky-400/50"
+                : "text-slate-300 hover:text-white hover:bg-white/10"
             }`}
           >
-            {isCompleted ? (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            ) : (
-              <Circle className="w-3.5 h-3.5 text-slate-400" />
-            )}
-            <span className="font-bold">{currentTopic.displayCode}</span>
-            <span className="hidden md:inline truncate max-w-[140px]">
-              {isCompleted ? "Done" : "Mark Done"}
-            </span>
+            Unit 1
           </button>
-
-          {/* Speed-Read Toggle */}
           <button
-            onClick={toggleSpeedReadMode}
-            title={speedReadMode ? "Disable Speed-Read" : "Enable Speed-Read"}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 cursor-pointer ${
-              speedReadMode
-                ? "bg-amber-400/25 border border-amber-400/50 text-amber-200 shadow-[0_0_15px_-3px_rgba(251,191,36,0.5)]"
-                : "liquid-glass-pill text-slate-300"
+            onClick={() => jumpToUnitFirstTopic("u2-1")}
+            className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold transition-colors cursor-pointer ${
+              currentTopic.unitNumber === 2
+                ? "bg-purple-500/30 text-purple-200 border border-purple-400/50"
+                : "text-slate-300 hover:text-white hover:bg-white/10"
             }`}
           >
-            <Zap
-              className={`w-3.5 h-3.5 ${
-                speedReadMode ? "text-amber-300 fill-amber-300" : ""
-              }`}
-            />
-            <span className="hidden sm:inline">Speed</span>
+            Unit 2
           </button>
-
-          {/* Next Topic */}
           <button
-            disabled={!nextTopic}
-            onClick={() => nextTopic && navigateTo(nextTopic.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 ${
-              nextTopic
-                ? "liquid-glass-pill text-slate-200 cursor-pointer"
-                : "opacity-35 cursor-not-allowed text-slate-500"
+            onClick={() => jumpToUnitFirstTopic("u3-1")}
+            className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold transition-colors cursor-pointer ${
+              currentTopic.unitNumber === 3
+                ? "bg-emerald-500/30 text-emerald-200 border border-emerald-400/50"
+                : "text-slate-300 hover:text-white hover:bg-white/10"
             }`}
-            title={nextTopic ? `Next: ${nextTopic.title}` : undefined}
           >
-            <span className="hidden sm:inline">Next</span>
-            <ChevronRight className="w-4 h-4" />
+            Unit 3
           </button>
-
-          {/* Scroll to Top */}
           <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
-            title="Scroll to Top"
+            onClick={() => jumpToUnitFirstTopic("u4-1")}
+            className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold transition-colors cursor-pointer ${
+              currentTopic.unitNumber === 4
+                ? "bg-amber-500/30 text-amber-200 border border-amber-400/50"
+                : "text-slate-300 hover:text-white hover:bg-white/10"
+            }`}
           >
-            <ArrowUp className="w-3.5 h-3.5" />
+            Unit 4
+          </button>
+          <button
+            onClick={() => jumpToUnitFirstTopic("u5-1")}
+            className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold transition-colors cursor-pointer ${
+              currentTopic.unitNumber === 5
+                ? "bg-cyan-500/30 text-cyan-200 border border-cyan-400/50"
+                : "text-slate-300 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            Unit 5
+          </button>
+          <button
+            onClick={() => jumpToUnitFirstTopic("bmt-t1")}
+            className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold transition-colors cursor-pointer ${
+              currentTopic.unitId === "bmt"
+                ? "bg-rose-500/30 text-rose-200 border border-rose-400/50"
+                : "text-slate-300 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            BMT
           </button>
         </div>
-      </div>
+
+        {/* Previous Topic Button */}
+        <button
+          onClick={goToPrevTopic}
+          disabled={!prevTopic}
+          title={prevTopic ? `Previous: ${prevTopic.title}` : "First topic"}
+          className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+            prevTopic
+              ? "liquid-glass-pill text-white cursor-pointer active:scale-95"
+              : "opacity-30 cursor-not-allowed text-slate-500"
+          }`}
+        >
+          <ChevronLeft className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Prev</span>
+        </button>
+
+        {/* Current Topic Badge & Mark Mastered Soft-Click Button */}
+        <button
+          onClick={() => {
+            toggleTopicComplete(currentTopic.id);
+            if (typeof navigator !== "undefined" && navigator.vibrate) {
+              navigator.vibrate(25);
+            }
+          }}
+          title={isCurrentDone ? "Topic Mastered! Tap anywhere on this pill to uncheck" : "Tap anywhere on this pill to mark topic mastered"}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border transition-all duration-200 cursor-pointer select-none active:scale-95 shadow-md ${
+            isCurrentDone
+              ? "bg-emerald-950/70 border-emerald-500/50 text-emerald-200 shadow-emerald-500/20"
+              : "bg-slate-950/80 hover:bg-white/10 border-white/20 text-slate-200 hover:border-emerald-400/40"
+          }`}
+        >
+          <div className={`p-0.5 rounded-full transition-transform duration-200 ${
+            isCurrentDone ? "text-emerald-400 animate-tick-pop" : "text-slate-400 group-hover:text-emerald-300"
+          }`}>
+            {isCurrentDone ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <Circle className="w-4 h-4 text-slate-400" />
+            )}
+          </div>
+          <span className="font-mono text-xs font-bold text-white tracking-wide">
+            {currentTopic.displayCode}
+          </span>
+          <span className="text-[10px] font-mono opacity-70 hidden xs:inline">
+            {isCurrentDone ? "Done" : "Mark"}
+          </span>
+        </button>
+
+        {/* Next Topic Button */}
+        <button
+          onClick={goToNextTopic}
+          disabled={!nextTopic}
+          title={nextTopic ? `Next: ${nextTopic.title}` : "Last topic"}
+          className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+            nextTopic
+              ? "liquid-glass-pill text-white cursor-pointer active:scale-95"
+              : "opacity-30 cursor-not-allowed text-slate-500"
+          }`}
+        >
+          <span className="hidden sm:inline">Next</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
+
+        {/* Speed-Read Toggle */}
+        <button
+          onClick={toggleSpeedReadMode}
+          title="Toggle Speed-Read Mode"
+          className={`hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            speedReadMode
+              ? "bg-amber-400/30 text-amber-200 border border-amber-400/60 shadow"
+              : "liquid-glass-pill text-slate-300 hover:text-white"
+          }`}
+        >
+          <Zap
+            className={`w-3.5 h-3.5 ${
+              speedReadMode ? "text-amber-300 fill-amber-300" : "text-slate-400"
+            }`}
+          />
+          <span className="hidden md:inline">Speed</span>
+        </button>
+      </nav>
     </div>
   );
-}
+});
+
+FloatingBottomDock.displayName = "FloatingBottomDock";

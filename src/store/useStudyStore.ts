@@ -4,8 +4,26 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { ALL_TOPICS, SYLLABUS_UNITS, UnitId, ConceptId } from "@/data";
 
-export type ViewMode = "focus" | "stream" | "matrix" | "lexicon";
+export type ViewMode = "focus" | "stream" | "matrix" | "lexicon" | "revision";
 export type DeviceMode = "mac" | "iphone16e";
+export type StudyGoal = "revise" | "learn";
+export type LearningPosture = "learn-new" | "pre-lesson-cram";
+export type FlashcardDeckType = "glossary" | "formulas" | "theorists" | "exam-questions";
+export type AcademicStyle = "newsreader" | "garamond" | "jakarta";
+export type HandwrittenStyle = AcademicStyle;
+export type WidgetTemplateSize = "small" | "medium" | "large";
+
+export interface StudySyncPayload {
+  completedTopics: Record<string, boolean>;
+  completedSubSections: Record<string, boolean>;
+  bookmarkedCases: Record<string, boolean>;
+  topicNotes: Record<string, string>;
+  activeTopicId: string;
+  studyGoal: StudyGoal;
+  academicStyle: AcademicStyle;
+  speedReadMode: boolean;
+  timestamp: number;
+}
 
 interface StudyStoreState {
   // Navigation & View State
@@ -13,11 +31,26 @@ interface StudyStoreState {
   activeUnitFilter: UnitId | "all";
   activeConceptFilter: ConceptId | "all";
   viewMode: ViewMode;
-  deviceMode: DeviceMode;
+  deviceMode: "mac";
+  studyGoal: StudyGoal;
+  learningPosture: LearningPosture;
+  academicStyle: AcademicStyle;
+  handwrittenStyle: AcademicStyle;
   speedReadMode: boolean;
   searchQuery: string;
   sidebarCollapsed: boolean;
   unitSheetOpen: boolean;
+  chapterSheetOpen: boolean;
+  diagnosticsActive: boolean;
+  syncToastMessage: string | null;
+  isInspectorOpen: boolean;
+  isExamSprintActive: boolean;
+  isSpotlightOpen: boolean;
+  widgetTemplate: WidgetTemplateSize;
+
+  // Flashcards & Active Recall State
+  activeFlashcardDeck: FlashcardDeckType;
+  masteredFlashcards: Record<string, boolean>;
 
   // Persisted Study Progress State
   completedTopics: Record<string, boolean>;
@@ -31,10 +64,37 @@ interface StudyStoreState {
   setActiveConceptFilter: (conceptId: ConceptId | "all") => void;
   setViewMode: (mode: ViewMode) => void;
   setDeviceMode: (device: DeviceMode) => void;
+  setStudyGoal: (goal: StudyGoal) => void;
+  setLearningPosture: (posture: LearningPosture) => void;
+  setAcademicStyle: (style: AcademicStyle) => void;
+  setHandwrittenStyle: (style: AcademicStyle) => void;
   toggleSpeedReadMode: () => void;
   setSearchQuery: (query: string) => void;
   toggleSidebar: () => void;
   setUnitSheetOpen: (open: boolean) => void;
+  setChapterSheetOpen: (open: boolean) => void;
+  triggerDiagnostics: () => void;
+  closeDiagnostics: () => void;
+  setSyncToastMessage: (msg: string | null) => void;
+  toggleInspector: () => void;
+  setInspectorOpen: (open: boolean) => void;
+  openExamSprint: () => void;
+  closeExamSprint: () => void;
+  toggleExamSprint: () => void;
+  openSpotlight: () => void;
+  closeSpotlight: () => void;
+  toggleSpotlight: () => void;
+  setSpotlightOpen: (open: boolean) => void;
+  setWidgetTemplate: (template: WidgetTemplateSize) => void;
+
+  // Sync Engine Actions
+  getSyncPayload: () => StudySyncPayload;
+  hydrateFromSyncPayload: (payload: Partial<StudySyncPayload>) => void;
+
+  // Active Recall & Flashcard Actions
+  setActiveFlashcardDeck: (deck: FlashcardDeckType) => void;
+  toggleFlashcardMastered: (id: string) => void;
+  resetFlashcardProgress: () => void;
 
   // Progress Tracking Actions
   toggleTopicComplete: (topicId: string) => void;
@@ -55,10 +115,24 @@ export const useStudyStore = create<StudyStoreState>()(
       activeConceptFilter: "all",
       viewMode: "focus",
       deviceMode: "mac",
+      studyGoal: "revise",
+      learningPosture: "pre-lesson-cram",
+      academicStyle: "newsreader",
+      handwrittenStyle: "newsreader",
       speedReadMode: false,
       searchQuery: "",
       sidebarCollapsed: false,
       unitSheetOpen: false,
+      chapterSheetOpen: false,
+      diagnosticsActive: false,
+      syncToastMessage: null,
+      isInspectorOpen: true,
+      isExamSprintActive: false,
+      isSpotlightOpen: false,
+      widgetTemplate: "medium",
+
+      activeFlashcardDeck: "glossary",
+      masteredFlashcards: {},
 
       completedTopics: {},
       completedSubSections: {},
@@ -85,9 +159,33 @@ export const useStudyStore = create<StudyStoreState>()(
           viewMode: mode,
         }),
 
-      setDeviceMode: (device) =>
+      setDeviceMode: () =>
         set({
-          deviceMode: device,
+          deviceMode: "mac",
+        }),
+
+      setStudyGoal: (goal) =>
+        set({
+          studyGoal: goal,
+          learningPosture: goal === "revise" ? "pre-lesson-cram" : "learn-new",
+        }),
+
+      setLearningPosture: (posture) =>
+        set({
+          learningPosture: posture,
+          studyGoal: posture === "pre-lesson-cram" ? "revise" : "learn",
+        }),
+
+      setAcademicStyle: (style) =>
+        set({
+          academicStyle: style,
+          handwrittenStyle: style,
+        }),
+
+      setHandwrittenStyle: (style) =>
+        set({
+          academicStyle: style,
+          handwrittenStyle: style,
         }),
 
       toggleSpeedReadMode: () =>
@@ -108,54 +206,150 @@ export const useStudyStore = create<StudyStoreState>()(
       setUnitSheetOpen: (open) =>
         set({
           unitSheetOpen: open,
+          chapterSheetOpen: open,
+        }),
+
+      setChapterSheetOpen: (open) =>
+        set({
+          unitSheetOpen: open,
+          chapterSheetOpen: open,
+        }),
+
+      triggerDiagnostics: () =>
+        set({
+          diagnosticsActive: true,
+        }),
+
+      closeDiagnostics: () =>
+        set({
+          diagnosticsActive: false,
+        }),
+
+      setSyncToastMessage: (msg) =>
+        set({
+          syncToastMessage: msg,
+        }),
+
+      toggleInspector: () =>
+        set((state) => ({
+          isInspectorOpen: !state.isInspectorOpen,
+        })),
+
+      setInspectorOpen: (open) =>
+        set({
+          isInspectorOpen: open,
+        }),
+
+      openExamSprint: () =>
+        set({
+          isExamSprintActive: true,
+        }),
+
+      closeExamSprint: () =>
+        set({
+          isExamSprintActive: false,
+        }),
+
+      toggleExamSprint: () =>
+        set((state) => ({
+          isExamSprintActive: !state.isExamSprintActive,
+        })),
+
+      openSpotlight: () =>
+        set({
+          isSpotlightOpen: true,
+        }),
+
+      closeSpotlight: () =>
+        set({
+          isSpotlightOpen: false,
+        }),
+
+      toggleSpotlight: () =>
+        set((state) => ({
+          isSpotlightOpen: !state.isSpotlightOpen,
+        })),
+
+      setSpotlightOpen: (open) =>
+        set({
+          isSpotlightOpen: open,
+        }),
+
+      setWidgetTemplate: (template) =>
+        set({
+          widgetTemplate: template,
+        }),
+
+      getSyncPayload: () => {
+        const s = get();
+        return {
+          completedTopics: s.completedTopics,
+          completedSubSections: s.completedSubSections,
+          bookmarkedCases: s.bookmarkedCases,
+          topicNotes: s.topicNotes,
+          activeTopicId: s.activeTopicId,
+          studyGoal: s.studyGoal,
+          academicStyle: s.academicStyle,
+          speedReadMode: s.speedReadMode,
+          timestamp: Date.now(),
+        };
+      },
+
+      hydrateFromSyncPayload: (payload) => {
+        if (!payload) return;
+        set((state) => ({
+          completedTopics: payload.completedTopics || state.completedTopics,
+          completedSubSections:
+            payload.completedSubSections || state.completedSubSections,
+          bookmarkedCases: payload.bookmarkedCases || state.bookmarkedCases,
+          topicNotes: payload.topicNotes || state.topicNotes,
+          activeTopicId: payload.activeTopicId || state.activeTopicId,
+          studyGoal: payload.studyGoal || state.studyGoal,
+          learningPosture:
+            payload.studyGoal === "revise" ? "pre-lesson-cram" : "learn-new",
+          academicStyle: payload.academicStyle || state.academicStyle,
+          speedReadMode:
+            typeof payload.speedReadMode === "boolean"
+              ? payload.speedReadMode
+              : state.speedReadMode,
+          deviceMode: "mac",
+          syncToastMessage: "✓ Live Synced: All Topics & Progress Loaded!",
+        }));
+      },
+
+      setActiveFlashcardDeck: (deck) =>
+        set({
+          activeFlashcardDeck: deck,
+        }),
+
+      toggleFlashcardMastered: (id) =>
+        set((state) => ({
+          masteredFlashcards: {
+            ...state.masteredFlashcards,
+            [id]: !state.masteredFlashcards[id],
+          },
+        })),
+
+      resetFlashcardProgress: () =>
+        set({
+          masteredFlashcards: {},
         }),
 
       toggleTopicComplete: (topicId) =>
-        set((state) => {
-          const isCurrentlyCompleted = !!state.completedTopics[topicId];
-          const nextCompleted = !isCurrentlyCompleted;
-          const topic = ALL_TOPICS.find((t) => t.id === topicId);
+        set((state) => ({
+          completedTopics: {
+            ...state.completedTopics,
+            [topicId]: !state.completedTopics[topicId],
+          },
+        })),
 
-          const updatedSubSections = { ...state.completedSubSections };
-          if (topic) {
-            topic.subSections.forEach((sub) => {
-              updatedSubSections[sub.id] = nextCompleted;
-            });
-          }
-
-          return {
-            completedTopics: {
-              ...state.completedTopics,
-              [topicId]: nextCompleted,
-            },
-            completedSubSections: updatedSubSections,
-          };
-        }),
-
-      toggleSubSectionComplete: (topicId, subSectionId) =>
-        set((state) => {
-          const nextSubState = !state.completedSubSections[subSectionId];
-          const updatedSubSections = {
+      toggleSubSectionComplete: (_topicId, subSectionId) =>
+        set((state) => ({
+          completedSubSections: {
             ...state.completedSubSections,
-            [subSectionId]: nextSubState,
-          };
-
-          const topic = ALL_TOPICS.find((t) => t.id === topicId);
-          let allSubsDone = false;
-          if (topic && topic.subSections.length > 0) {
-            allSubsDone = topic.subSections.every(
-              (sub) => !!updatedSubSections[sub.id]
-            );
-          }
-
-          return {
-            completedSubSections: updatedSubSections,
-            completedTopics: {
-              ...state.completedTopics,
-              [topicId]: allSubsDone,
-            },
-          };
-        }),
+            [subSectionId]: !state.completedSubSections[subSectionId],
+          },
+        })),
 
       toggleUnitComplete: (unitId) =>
         set((state) => {
@@ -223,7 +417,7 @@ export const useStudyStore = create<StudyStoreState>()(
       },
     }),
     {
-      name: "ib-bm-hl-study-store-v1",
+      name: "ib-bm-hl-study-store-v2",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         completedTopics: state.completedTopics,
@@ -231,7 +425,8 @@ export const useStudyStore = create<StudyStoreState>()(
         bookmarkedCases: state.bookmarkedCases,
         topicNotes: state.topicNotes,
         activeTopicId: state.activeTopicId,
-        deviceMode: state.deviceMode,
+        studyGoal: state.studyGoal,
+        academicStyle: state.academicStyle,
         speedReadMode: state.speedReadMode,
       }),
     }

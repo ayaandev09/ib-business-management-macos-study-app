@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- Emerald Executive Gradients -->
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a7f3d0"/>
+      <stop offset="30%" stop-color="#34d399"/>
+      <stop offset="70%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#064e3b"/>
+    </linearGradient>
+    <radialGradient id="emeraldAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#059669" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#064e3b" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Electric Sapphire Gradients -->
+    <linearGradient id="sapphireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="50%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+
+    <!-- Deep Jade Gradients -->
+    <linearGradient id="jadeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="50%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#064e3b"/>
+    </linearGradient>
+
+    <!-- Gold Exponential Arrow Gradients -->
+    <linearGradient id="goldVector" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="60%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#fef08a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ambient Executive Aura -->
+  <circle cx="256" cy="256" r="240" fill="url(#emeraldAura)"/>
+
+  <!-- Outer Glass Rim & Matrix Coordinates Ring -->
+  <circle cx="256" cy="256" r="230" fill="#06121a" stroke="url(#emeraldGrad)" stroke-width="8" stroke-opacity="0.95"/>
+  <circle cx="256" cy="256" r="214" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="8 8" stroke-opacity="0.6"/>
+
+  <!-- 3D Isometric C-Suite Strategic Cube -->
+  <!-- Top Face: Strategy, Leadership & Governance -->
+  <polygon
+    points="256,104 388,180 256,256 124,180"
+    fill="url(#emeraldGrad)"
+    stroke="#d1fae5"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+
+  <!-- Left Face: Finance, Accounts & Human Resource Management -->
+  <polygon
+    points="124,180 256,256 256,408 124,332"
+    fill="url(#jadeGrad)"
+    stroke="#34d399"
+    stroke-width="2.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Right Face: Marketing, Operations & Growth -->
+  <polygon
+    points="256,256 388,180 388,332 256,408"
+    fill="url(#sapphireGrad)"
+    stroke="#38bdf8"
+    stroke-width="2.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Central Spine Facet Line -->
+  <line x1="256" y1="256" x2="256" y2="408" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.75"/>
+
+  <!-- Upward Exponential Value Growth Vector Arrow -->
+  <path
+    d="M 176 352 L 232 268 L 284 300 L 372 136"
+    fill="none"
+    stroke="url(#goldVector)"
+    stroke-width="12"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Arrowhead (Sharp Crisp Triangle Pointing to Top Right) -->
+  <polygon
+    points="386,116 384,166 338,142"
+    fill="#fef08a"
+    stroke="#f59e0b"
+    stroke-width="2"
+  />
+
+  <!-- Growth Milestone Nodes -->
+  <circle cx="176" cy="352" r="7" fill="#f59e0b" stroke="#ffffff" stroke-width="2"/>
+  <circle cx="232" cy="268" r="8" fill="#fbbf24" stroke="#ffffff" stroke-width="2"/>
+  <circle cx="284" cy="300" r="8" fill="#fbbf24" stroke="#ffffff" stroke-width="2"/>
+  <circle cx="372" cy="136" r="9" fill="#fef08a" stroke="#ffffff" stroke-width="2.5"/>
+
+  <!-- Central Unit Pillars Core Diamond Node -->
+  <polygon points="256,246 266,256 256,266 246,256" fill="#ffffff"/>
+</svg>

@@ -2,27 +2,36 @@ import type { Metadata, Viewport } from "next";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "IB Business Management HL — Liquid Glass Study Dashboard",
-  description:
-    "Ultra-responsive Liquid Glass interactive study dashboard, formula bank, concept matrix, and notes database for IB Business Management HL.",
-};
-
 export const viewport: Viewport = {
-  themeColor: "#05070f",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   viewportFit: "cover",
+  themeColor: "#05070f",
+};
+
+export const metadata: Metadata = {
+  title: "IB Business Management HL — Liquid Glass Study Database (Mac & Mobile)",
+  description:
+    "High-performance academic study database, formula bank, and speed-reading dashboard for IB Business Management HL. Optimized with Apple liquid glass interface, Uniswap fluid jelly animations, and scholarly academic typography.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "IB BM HL Study",
+  },
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" className="dark">
+    <html
+      lang="en"
+      className="dark"
+      data-academic-font="newsreader"
+      data-handwritten-style="newsreader"
+    >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -31,7 +40,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
         <link
@@ -40,7 +49,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="bg-[#05070f] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-white font-sans min-h-screen">
+      <body className="antialiased selection:bg-sky-500/30 selection:text-sky-100 min-h-screen">
         {children}
       </body>
     </html>

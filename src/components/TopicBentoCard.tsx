@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { TopicData, SYLLABUS_UNITS, CONCEPTS_TAXONOMY } from "@/data";
 import { useStudyStore } from "@/store/useStudyStore";
+import { RecallFlipCard } from "@/components/RecallFlipCard";
 import {
   CheckCircle2,
   Circle,
@@ -14,17 +15,26 @@ import {
   StickyNote,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Bookmark,
   GraduationCap,
   Building2,
   AlertCircle,
   Wrench,
   TrendingUp,
+  Zap,
+  HelpCircle,
+  Lightbulb,
+  Eye,
+  EyeOff,
+  ArrowRight,
 } from "lucide-react";
 
 interface TopicBentoCardProps {
   topic: TopicData;
   isDeferred?: boolean;
+  showPrevNextControls?: boolean;
 }
 
 const IMPORTANCE_BADGE_STYLES: Record<
@@ -42,9 +52,10 @@ const IMPORTANCE_BADGE_STYLES: Record<
     "bg-amber-500/20 text-amber-200 border-amber-400/40",
 };
 
-export function TopicBentoCard({
+export const TopicBentoCard = React.memo(function TopicBentoCard({
   topic,
   isDeferred = false,
+  showPrevNextControls = true,
 }: TopicBentoCardProps) {
   const {
     completedTopics,
@@ -58,9 +69,19 @@ export function TopicBentoCard({
     setActiveConceptFilter,
     topicNotes,
     setTopicNote,
+    learningPosture,
+    setLearningPosture,
+    studyGoal,
+    setStudyGoal,
+    goToPrevTopic,
+    goToNextTopic,
+    setActiveFlashcardDeck,
   } = useStudyStore();
 
   const [showScratchpad, setShowScratchpad] = useState(false);
+  const [showCheckpointHint, setShowCheckpointHint] = useState(false);
+  const [showCheckpointAnswer, setShowCheckpointAnswer] = useState(false);
+  const [activePracticeTab, setActivePracticeTab] = useState<"2m" | "4m" | "10m">("10m");
   const isCompleted = !!completedTopics[topic.id];
   const noteText = topicNotes[topic.id] || "";
   const unit = SYLLABUS_UNITS.find((u) => u.id === topic.unitId);
@@ -70,9 +91,20 @@ export function TopicBentoCard({
 
   return (
     <article
+      key={topic.id}
       id={`topic-card-${topic.id}`}
-      className={`space-y-5 ${isDeferred ? "deferred-chapter-card" : ""}`}
+      className={`space-y-5 topic-transition-enter ${isDeferred ? "deferred-chapter-card" : ""}`}
     >
+      <RecallFlipCard
+        moduleCode={topic.displayCode}
+        title={`${topic.displayCode} · ${topic.title}`}
+        prompt={topic.examPromptTakeaway || topic.summary}
+        answer={topic.analysis.coreThesis || topic.summary}
+        accent="#50C878"
+        secondary="#D4AF37"
+        meta="ACTIVE RECALL"
+      />
+
       {/* =====================================================================
           1. HERO TOPIC BANNER
           ===================================================================== */}
@@ -138,31 +170,220 @@ export function TopicBentoCard({
             </div>
           </div>
 
-          {/* Quick Mark Complete Button */}
+          {/* Prev/Next Topic Controls + Mark Complete Button */}
           <div className="flex items-center gap-2 shrink-0">
+            {showPrevNextControls && (
+              <div className="flex items-center gap-1 mr-1">
+                <button
+                  onClick={goToPrevTopic}
+                  title="Previous Topic"
+                  className="p-2 rounded-2xl liquid-glass-pill text-slate-300 hover:text-white cursor-pointer active:scale-95"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={goToNextTopic}
+                  title="Next Topic"
+                  className="p-2 rounded-2xl liquid-glass-pill text-slate-300 hover:text-white cursor-pointer active:scale-95"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             <button
-              onClick={() => toggleTopicComplete(topic.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-medium transition-all cursor-pointer ${
+              onClick={() => {
+                toggleTopicComplete(topic.id);
+                if (typeof navigator !== "undefined" && navigator.vibrate) {
+                  navigator.vibrate(20);
+                }
+              }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer active:scale-95 select-none ${
                 isCompleted
-                  ? "bg-emerald-500/20 border border-emerald-400/50 text-emerald-200 shadow-[0_0_20px_-4px_rgba(16,185,129,0.5)]"
-                  : "liquid-glass-pill text-slate-300 hover:text-white"
+                  ? "bg-emerald-500/25 border border-emerald-400/50 text-emerald-200 shadow-[0_0_20px_-4px_rgba(16,185,129,0.5)]"
+                  : "bg-white/10 hover:bg-emerald-500/20 text-white border border-white/20 hover:border-emerald-400/40"
               }`}
             >
-              {isCompleted ? (
-                <>
+              <div className={isCompleted ? "animate-tick-pop" : ""}>
+                {isCompleted ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Topic Mastered</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 text-slate-400" />
-                  <span>Mark as Mastered</span>
-                </>
-              )}
+                ) : (
+                  <Circle className="w-4 h-4 text-slate-300" />
+                )}
+              </div>
+              <span>{isCompleted ? "Topic Mastered" : "Mark as Mastered"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Dual Mode Postural Switcher */}
+        <div className="mt-5 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 relative z-10">
+          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-950/70 border border-white/10">
+            <button
+              onClick={() => setLearningPosture("learn-new")}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+                learningPosture === "learn-new"
+                  ? "bg-sky-500/25 border border-sky-400/40 text-sky-200 shadow-[0_0_15px_-3px_rgba(14,165,233,0.4)]"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <GraduationCap className="w-4 h-4 text-sky-400" />
+              <span>Study as New (Full Walkthrough)</span>
+            </button>
+
+            <button
+              onClick={() => setLearningPosture("pre-lesson-cram")}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+                learningPosture === "pre-lesson-cram"
+                  ? "bg-amber-500/25 border border-amber-400/40 text-amber-200 shadow-[0_0_15px_-3px_rgba(245,158,11,0.4)]"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Zap className="w-4 h-4 text-amber-400" />
+              <span>Pre-Lesson / Exam Cram</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setActiveFlashcardDeck("glossary");
+                setViewMode("revision");
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-purple-500/20 text-purple-300 border border-purple-400/30 hover:bg-purple-500/30 transition-all cursor-pointer"
+            >
+              <Brain className="w-3.5 h-3.5" />
+              <span>Practice Active Recall</span>
             </button>
           </div>
         </div>
       </div>
+
+      {/* =====================================================================
+          PRE-LESSON 5-MINUTE PRIMER & EXAM CRAM BENTO
+          ===================================================================== */}
+      {learningPosture === "pre-lesson-cram" && (
+        <section className="liquid-glass-bento rounded-3xl p-6 border-amber-400/30 bg-amber-950/15 space-y-5 shadow-[0_0_30px_-5px_rgba(245,158,11,0.2)] animate-in fade-in duration-200">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Zap className="w-5 h-5 text-amber-400" />
+              <h2 className="text-base font-bold text-white tracking-wide">
+                5-Minute Pre-Lesson Classroom Primer &amp; Exam Cram
+              </h2>
+            </div>
+            <span className="font-mono text-xs px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-200 border border-amber-400/30">
+              ⚡ Rapid Review Mode
+            </span>
+          </div>
+
+          {/* 1. What You Must Know Before Class */}
+          <div className="p-4 rounded-2xl bg-slate-950/70 border border-white/10 space-y-2">
+            <span className="text-xs font-mono font-bold text-amber-300 uppercase flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              3-Minute Classroom Briefing:
+            </span>
+            <div className="space-y-1.5 text-xs text-slate-200">
+              {topic.speedReadBullets.slice(0, 3).map((b, idx) => (
+                <div key={idx} className="flex items-start gap-2 pl-2 border-l-2 border-amber-400/50">
+                  <span className="text-amber-400 font-bold shrink-0">•</span>
+                  <span>{b}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 2. Red Flag Warnings: Common Exam Traps */}
+          <div className="p-4 rounded-2xl bg-rose-950/30 border border-rose-400/30 space-y-2">
+            <span className="text-xs font-mono font-bold text-rose-300 uppercase flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+              High-Frequency Exam Traps &amp; Misconceptions:
+            </span>
+            <div className="space-y-1.5 text-xs text-rose-100">
+              {topic.analysis.commonMisconceptions.map((m, idx) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold shrink-0">⚠</span>
+                  <span>{m}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. High-Yield Practice Exam Prompts with Model Strategy */}
+          <div className="p-4 rounded-2xl bg-slate-950/70 border border-white/10 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-mono font-bold text-sky-300 uppercase flex items-center gap-1.5">
+                <GraduationCap className="w-4 h-4 text-sky-400" />
+                Practice Exam Prompts &amp; Mark Scheme Criteria:
+              </span>
+              <div className="flex items-center gap-1 p-0.5 rounded-xl bg-white/5 border border-white/10">
+                <button
+                  onClick={() => setActivePracticeTab("2m")}
+                  className={`px-2 py-0.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                    activePracticeTab === "2m" ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  2 Marks (AO1)
+                </button>
+                <button
+                  onClick={() => setActivePracticeTab("4m")}
+                  className={`px-2 py-0.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                    activePracticeTab === "4m" ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  4 Marks (AO2)
+                </button>
+                <button
+                  onClick={() => setActivePracticeTab("10m")}
+                  className={`px-2 py-0.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                    activePracticeTab === "10m" ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  10 Marks (AO3)
+                </button>
+              </div>
+            </div>
+
+            {activePracticeTab === "2m" && (
+              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-2 text-xs">
+                <div className="font-bold text-white">
+                  <strong>Question: </strong> Define the term &lsquo;{topic.subSections[0]?.title.split(":")[0] || topic.title}&rsquo;. [2 marks]
+                </div>
+                <div className="text-slate-300 pl-3 border-l border-sky-400/40">
+                  <strong className="text-sky-300">Mark Scheme Key: </strong>
+                  Award [1] for basic outline and [2] for an authoritative, syllabus-accurate definition with key economic criteria.
+                </div>
+              </div>
+            )}
+
+            {activePracticeTab === "4m" && (
+              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-2 text-xs">
+                <div className="font-bold text-white">
+                  <strong>Question: </strong> Explain one advantage and one disadvantage of implementing {topic.subSections[0]?.title} for a commercial business. [4 marks]
+                </div>
+                <div className="text-slate-300 pl-3 border-l border-sky-400/40 space-y-1">
+                  <div><strong className="text-sky-300">Advantage: </strong>{topic.subSections[0]?.analyticalTakeaway}</div>
+                  <div><strong className="text-sky-300">Disadvantage: </strong>{topic.analysis.commonMisconceptions[0] || "High capital setup cost and operational transition friction."}</div>
+                </div>
+              </div>
+            )}
+
+            {activePracticeTab === "10m" && (
+              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-2.5 text-xs">
+                <div className="font-bold text-white">
+                  <strong>Essay Prompt: </strong> With reference to an organization of your choice, evaluate {topic.examPromptTakeaway.slice(0, 140)}... [10 marks]
+                </div>
+                <div className="p-2.5 rounded-xl bg-sky-950/40 border border-sky-400/20 text-[11px] text-sky-200 font-mono space-y-1">
+                  <div className="font-bold text-sky-300">SLAP Evaluation Formula for 10/10:</div>
+                  <div>• <strong>S</strong>takeholders: Analyze conflicting impacts (shareholders vs staff vs customers).</div>
+                  <div>• <strong>L</strong>ong-term vs Short-term: Immediate upfront costs vs long-run strategic survival.</div>
+                  <div>• <strong>A</strong>ssumptions: What external STEEPLE conditions must hold true?</div>
+                  <div>• <strong>P</strong>riorities: Decisive, justified final recommendation on what to execute first.</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* =====================================================================
           2. SPEED-READ EXECUTIVE SUMMARY & BULLETS
@@ -504,7 +725,105 @@ export function TopicBentoCard({
       )}
 
       {/* =====================================================================
-          7. REVISION SCRATCHPAD (PERSISTENT USER NOTES)
+          7. STUDY-AS-NEW FORMATIVE CHECKPOINT (CHECK YOUR UNDERSTANDING)
+          ===================================================================== */}
+      {learningPosture === "learn-new" && (
+        <section className="liquid-glass-bento rounded-3xl p-6 border-sky-400/30 bg-sky-950/15 space-y-4 shadow-[0_0_30px_-5px_rgba(14,165,233,0.15)] animate-in fade-in duration-200">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <BookOpenCheck className="w-5 h-5 text-sky-400" />
+              <h2 className="text-base font-bold text-white tracking-wide">
+                Check Your Understanding • First-Principles Mastery Check
+              </h2>
+            </div>
+            <span className="font-mono text-xs px-2.5 py-1 rounded-xl bg-sky-500/20 text-sky-200 border border-sky-400/30">
+              🎓 Study as New Checkpoint
+            </span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-950/70 border border-white/10 space-y-3">
+            <div className="text-xs font-mono font-bold text-sky-300 uppercase flex items-center gap-1.5">
+              <HelpCircle className="w-4 h-4 text-sky-400" />
+              <span>Core Application Challenge</span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed">
+              Based on the core syllabus principles of <strong>{topic.title}</strong>: How does {topic.subSections[0]?.title || "this business principle"} directly impact strategic decision-making and operational risk for a commercial organization?
+            </p>
+
+            {/* Toggle Hint & Model Answer */}
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
+              <button
+                onClick={() => setShowCheckpointHint((prev) => !prev)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-all cursor-pointer"
+              >
+                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                <span>{showCheckpointHint ? "Hide Strategy Clue" : "Need a Clue?"}</span>
+              </button>
+
+              <button
+                onClick={() => setShowCheckpointAnswer((prev) => !prev)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-400/30 transition-all cursor-pointer"
+              >
+                {showCheckpointAnswer ? (
+                  <>
+                    <EyeOff className="w-3.5 h-3.5" />
+                    <span>Hide Model Answer</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Reveal Model Answer &amp; Evaluation Criteria</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Hint Box */}
+            {showCheckpointHint && (
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-400/25 text-xs text-amber-100 leading-relaxed animate-in fade-in duration-200">
+                <span className="font-bold text-amber-300 font-mono">💡 Analytical Clue: </span>
+                Consider: {topic.analysis.coreThesis.slice(0, 180)}... Focus on conflicting stakeholder interests (e.g. employees vs shareholders) and whether short-term gains threaten long-term strategic viability.
+              </div>
+            )}
+
+            {/* Model Answer Box */}
+            {showCheckpointAnswer && (
+              <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-400/30 space-y-2 text-xs animate-in fade-in duration-200">
+                <div className="flex items-center gap-2 text-emerald-300 font-mono font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Exemplar Syllabus Answer &amp; Examiner Criteria:</span>
+                </div>
+                <p className="text-slate-200 leading-relaxed">
+                  {topic.analysis.strategicEvaluationAO3AO4}
+                </p>
+                <div className="pt-2 border-t border-emerald-400/20 flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-mono text-[11px] text-emerald-300">
+                    Did you synthesize both advantages and strategic trade-offs?
+                  </span>
+                  <button
+                    onClick={() => {
+                      toggleTopicComplete(topic.id);
+                      if (typeof navigator !== "undefined" && navigator.vibrate) {
+                        navigator.vibrate(20);
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-xl font-mono text-xs cursor-pointer transition-all duration-200 active:scale-95 select-none ${
+                      isCompleted
+                        ? "bg-emerald-500/30 text-emerald-200 border border-emerald-400/50 shadow-sm"
+                        : "bg-white/10 hover:bg-emerald-500/20 text-white border border-white/15"
+                    }`}
+                  >
+                    {isCompleted ? "✓ Concept Mastered" : "Mark as Understood"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* =====================================================================
+          8. REVISION SCRATCHPAD (PERSISTENT USER NOTES)
           ===================================================================== */}
       <section className="liquid-glass-bento rounded-3xl p-5">
         <div className="flex items-center justify-between gap-2">
@@ -562,4 +881,4 @@ export function TopicBentoCard({
       </footer>
     </article>
   );
-}
+});

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { CONCEPTS_TAXONOMY, ALL_TOPICS, ConceptId } from "@/data";
 import { useStudyStore } from "@/store/useStudyStore";
 import {
@@ -13,7 +13,17 @@ import {
   GraduationCap,
 } from "lucide-react";
 
-export function ThemeMatrixView() {
+// Pre-compute once at module load — static syllabus cases
+const ALL_CASES_WITH_TOPIC = ALL_TOPICS.flatMap((topic) =>
+  topic.cases.map((cs) => ({
+    ...cs,
+    topicId: topic.id,
+    topicCode: topic.displayCode,
+    topicTitle: topic.title,
+  }))
+);
+
+export const ThemeMatrixView = React.memo(function ThemeMatrixView() {
   const {
     activeConceptFilter,
     setActiveConceptFilter,
@@ -28,36 +38,28 @@ export function ThemeMatrixView() {
   const conceptsList = Object.values(CONCEPTS_TAXONOMY);
   const q = searchQuery.trim().toLowerCase();
 
-  // Extract all cases across all topics
-  const allCasesWithTopic = ALL_TOPICS.flatMap((topic) =>
-    topic.cases.map((cs) => ({
-      ...cs,
-      topicId: topic.id,
-      topicCode: topic.displayCode,
-      topicTitle: topic.title,
-    }))
-  );
-
-  const filteredCases = allCasesWithTopic.filter((cs) => {
-    if (onlyBookmarked && !bookmarkedCases[cs.id]) return false;
-    const matchesConcept =
-      activeConceptFilter === "all" ||
-      cs.concepts.includes(activeConceptFilter);
-    const matchesSearch =
-      !q ||
-      cs.company.toLowerCase().includes(q) ||
-      cs.context.toLowerCase().includes(q) ||
-      cs.application.toLowerCase().includes(q) ||
-      cs.evaluationAO3AO4.toLowerCase().includes(q) ||
-      cs.topicTitle.toLowerCase().includes(q) ||
-      cs.topicCode.toLowerCase().includes(q);
-    return matchesConcept && matchesSearch;
-  });
+  const filteredCases = useMemo(() => {
+    return ALL_CASES_WITH_TOPIC.filter((cs) => {
+      if (onlyBookmarked && !bookmarkedCases[cs.id]) return false;
+      const matchesConcept =
+        activeConceptFilter === "all" ||
+        cs.concepts.includes(activeConceptFilter);
+      const matchesSearch =
+        !q ||
+        cs.company.toLowerCase().includes(q) ||
+        cs.context.toLowerCase().includes(q) ||
+        cs.application.toLowerCase().includes(q) ||
+        cs.evaluationAO3AO4.toLowerCase().includes(q) ||
+        cs.topicTitle.toLowerCase().includes(q) ||
+        cs.topicCode.toLowerCase().includes(q);
+      return matchesConcept && matchesSearch;
+    });
+  }, [onlyBookmarked, bookmarkedCases, activeConceptFilter, q]);
 
   const jumpToTopic = (topicId: string) => {
     setActiveTopic(topicId);
     setViewMode("focus");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -104,7 +106,7 @@ export function ThemeMatrixView() {
                 : "liquid-glass-pill text-slate-300 hover:text-white"
             }`}
           >
-            All 4 Concepts ({allCasesWithTopic.length})
+            All 4 Concepts ({ALL_CASES_WITH_TOPIC.length})
           </button>
 
           {conceptsList.map((c) => {
@@ -277,4 +279,4 @@ export function ThemeMatrixView() {
       </section>
     </div>
   );
-}
+});
