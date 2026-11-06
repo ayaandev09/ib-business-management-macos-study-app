@@ -180,7 +180,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
   return (
     <>
       <header
-        className="liquid-glass-long-bar !rounded-3xl !overflow-visible p-3 sm:p-4 mb-3 sm:mb-4 flex flex-col gap-2.5 sm:gap-3 shadow-2xl relative mac-drag-region transition-all z-20"
+        className="liquid-glass-long-bar !rounded-3xl overflow-hidden p-2.5 sm:p-3 mb-3 flex flex-col gap-2 shadow-xl relative mac-drag-region transition-all z-20 w-full max-w-full"
       >
         {/* ========================================================================= */}
         {/* MOBILE COMPACT APP HEADER (< 640px) — Apple HIG Compliant */}
@@ -275,7 +275,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
         {/* ========================================================================= */}
         {/* DESKTOP FULL COMMAND HEADER (>= 640px) */}
         {/* ========================================================================= */}
-        <div className="hidden sm:flex items-center justify-between gap-3 w-full pb-2.5 border-b border-white/10 min-h-[44px]">
+        <div className="hidden sm:flex items-center justify-between gap-3 w-full pb-2 border-b border-white/10 min-h-[44px]">
           {/* Brand & Breadcrumbs (Left) */}
           <div className="flex items-center gap-2 shrink-0 mac-no-drag">
             {/* Native macOS Sidebar Toggle (⌘B) */}
@@ -311,8 +311,39 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             </button>
           </div>
 
+          {/* Center: Integrated Spotlight Quick Search Pill (Shown on very wide screens or flex-collapses) */}
+          <button
+            type="button"
+            onClick={openSpotlight}
+            title="Spotlight Search 52 Topics, Tools & Cases (⌘K)"
+            className="flex-1 max-w-[220px] 2xl:max-w-xs hidden 2xl:flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-black/50 hover:bg-black/70 border border-white/10 hover:border-emerald-400/40 transition-all text-left cursor-pointer group mac-no-drag shadow-inner"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <Search className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
+              <span className="text-xs text-slate-300 group-hover:text-white transition-colors truncate">
+                Search topics, cases...
+              </span>
+            </div>
+            <kbd className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/25 shrink-0">
+              ⌘K
+            </kbd>
+          </button>
+
           {/* Right Section: Compact Ergonomic Modality Switchers & Action Pills */}
           <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0 mac-no-drag">
+            {/* Quick Spotlight Trigger Button (Compact for non-2xl viewports) */}
+            <button
+              onClick={openSpotlight}
+              title="Search Topics & Cases (⌘K)"
+              className="flex 2xl:hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/50 hover:bg-black/70 border border-white/10 hover:border-emerald-400/40 text-slate-300 hover:text-white cursor-pointer transition-all"
+            >
+              <Search className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-[11px] font-medium text-slate-300 hidden sm:inline">Search</span>
+              <kbd className="inline-flex items-center px-1 py-0.2 rounded text-[9px] font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/25">
+                ⌘K
+              </kbd>
+            </button>
+
             {/* Study Goal Switcher: Revision vs Study (Compact Segmented Pill) */}
             <div className="flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs">
               <button
@@ -325,7 +356,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                 }`}
               >
                 <Zap className="w-3 h-3 text-amber-300" />
-                <span className="hidden lg:inline text-[11px]">Revise</span>
+                <span className="text-[11px]">Revise</span>
               </button>
               <button
                 onClick={() => setStudyGoal("learn")}
@@ -337,12 +368,12 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                 }`}
               >
                 <BookOpen className="w-3 h-3 text-emerald-300" />
-                <span className="hidden lg:inline text-[11px]">Study</span>
+                <span className="text-[11px]">Study</span>
               </button>
             </div>
 
-            {/* Academic & Professional Typography Switcher */}
-            <div className="flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs">
+            {/* Academic & Professional Typography Switcher (Shown on wide monitors) */}
+            <div className="hidden 2xl:flex items-center p-0.5 rounded-full bg-black/60 border border-white/12 text-xs">
               <span className="pl-2 text-slate-400 flex items-center">
                 <BookA className="w-3 h-3 text-emerald-400" />
               </span>
@@ -372,10 +403,10 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={openExamSprint}
               title="Launch Timed Exam Sprint (⌘E)"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-400/35 hover:bg-emerald-500/25 shadow-sm soft-button shrink-0"
+              className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-400/35 hover:bg-emerald-500/25 shadow-sm soft-button shrink-0"
             >
               <Timer className="w-3.5 h-3.5 text-emerald-300 animate-pulse" />
-              <span className="hidden xl:inline text-[11px]">Sprint</span>
+              <span className="hidden 2xl:inline text-[11px]">Sprint</span>
               <span className="text-[10px] font-mono text-emerald-400/70">⌘E</span>
             </button>
 
@@ -400,10 +431,10 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <button
                 onClick={onOpenWalkthrough}
                 title="Interactive App Walkthrough & Guide (Tour)"
-                className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-400/35 shadow-sm soft-button shrink-0"
+                className="hidden 2xl:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-400/35 shadow-sm soft-button shrink-0"
               >
                 <Compass className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden xl:inline text-[11px]">Tour</span>
+                <span className="text-[11px]">Tour</span>
               </button>
             )}
 
@@ -411,7 +442,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={() => setIsShortcutsOpen((prev) => !prev)}
               title="Keyboard Shortcuts Cheatsheet (?)"
-              className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all cursor-pointer border bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border-white/10 shadow-sm soft-button shrink-0"
+              className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full text-xs font-bold transition-all cursor-pointer border bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border-white/10 shadow-sm soft-button shrink-0"
             >
               <span className="text-xs font-mono font-bold text-slate-300">?</span>
             </button>
@@ -419,11 +450,11 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
         </div>
 
         {/* ========================================================================= */}
-        {/* ROW 2: SYMMETRICAL 5-COLUMN NAVIGATION GRID — 100% Adaptive to Any Mac */}
+        {/* ROW 2: UNIFIED SECTION SWITCHER TRACK (Clean, Streamlined macOS Segmented Bar) */}
         {/* ========================================================================= */}
         <nav
           aria-label="Integrated Main Sections Bar"
-          className="w-full grid grid-cols-5 gap-1 sm:gap-1.5 p-1 bg-black/60 border border-white/12 rounded-2xl shadow-inner relative"
+          className="w-full grid grid-cols-5 gap-1 sm:gap-1.5 p-1 bg-black/50 border border-white/10 rounded-2xl shadow-inner relative"
         >
           {navModes.map((mode) => {
             const isActive = viewMode === mode.id;
@@ -441,7 +472,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                   <motion.div
                     layoutId="activeNavTabIndicator"
                     transition={{ type: "spring", stiffness: 420, damping: 32 }}
-                    className="absolute inset-0 rounded-xl bg-emerald-500/25 border border-emerald-400/50 shadow-md shadow-emerald-500/20 pointer-events-none"
+                    className="absolute inset-0 rounded-xl bg-emerald-500/20 border border-emerald-400/45 shadow-sm pointer-events-none"
                   />
                 )}
                 <span className={`relative z-10 ${isActive ? "text-emerald-300 shrink-0" : "text-slate-400 shrink-0"}`}>
@@ -453,37 +484,6 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             );
           })}
         </nav>
-
-        {/* ========================================================================= */}
-        {/* ROW 3: FLAGSHIP SPACIOUS JELLY SPOTLIGHT COMMAND PILL (Raycast Ergonomics) */}
-        {/* ========================================================================= */}
-        <div className="w-full">
-          <button
-            type="button"
-            onClick={openSpotlight}
-            className="w-full px-4 py-2.5 rounded-2xl bg-black/55 hover:bg-black/70 border border-white/12 hover:border-emerald-400/40 text-left flex items-center justify-between gap-3 shadow-inner transition-all group cursor-pointer soft-button"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-7 h-7 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-300 group-hover:scale-105 transition-transform shrink-0">
-                <Search className="w-3.5 h-3.5" />
-              </div>
-              <div className="min-w-0 truncate">
-                <span className="text-xs text-slate-300 group-hover:text-white transition-colors">
-                  Spotlight Search 52 Business topics, C-Suite frameworks, BMT tools, cases...
-                </span>
-                <span className="hidden lg:inline text-[11px] text-slate-400 ml-2 font-mono">
-                  (e.g. &ldquo;Ansoff&rdquo;, &ldquo;Break-Even&rdquo;, &ldquo;BCG Matrix&rdquo;, &ldquo;Tesla&rdquo;, &ldquo;BMT 4&rdquo;)
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/30 group-hover:bg-emerald-500/25 transition-all">
-                <kbd className="font-sans text-[11px]">⌘</kbd>K
-              </span>
-            </div>
-          </button>
-        </div>
 
         {/* Global Keyboard Shortcuts Cheatsheet Modal */}
         <KeyboardShortcutsModal
