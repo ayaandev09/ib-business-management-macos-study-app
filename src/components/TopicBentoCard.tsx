@@ -134,7 +134,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
               <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-xl bg-white/10 text-white border border-white/15">
                 {topic.displayCode}
               </span>
-              <span className="font-mono text-xs px-2.5 py-1 rounded-xl bg-sky-500/15 text-sky-300 border border-sky-400/25">
+              <span className="font-mono text-xs px-2.5 py-1 rounded-xl bg-emerald-500/15 text-emerald-300 border border-emerald-400/25">
                 {unit?.title.split(":")[0] || `UNIT ${topic.unitNumber}`}
               </span>
               <span

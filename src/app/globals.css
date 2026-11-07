@@ -218,17 +218,17 @@ blockquote,
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.12) 0%,
-    rgba(14, 21, 46, 0.9) 45%,
-    rgba(6, 10, 24, 0.97) 100%
+    rgba(10, 30, 18, 0.88) 45%,
+    rgba(3, 9, 5, 0.97) 100%
   );
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(255, 255, 255, 0.45);
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
-  border-right: 1px solid rgba(255, 255, 255, 0.18);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.82),
-    0 0 25px -4px rgba(56, 189, 248, 0.2),
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(134, 239, 172, 0.42);
+  border-left: 1px solid rgba(134, 239, 172, 0.2);
+  border-right: 1px solid rgba(202, 138, 4, 0.18);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.85),
+    0 0 28px -4px rgba(21, 128, 61, 0.22),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.42),
     inset 0 -1px 2px rgba(0, 0, 0, 0.3);
   border-radius: 28px;
@@ -240,9 +240,9 @@ blockquote,
 
 .liquid-glass-long-bar:hover,
 .liquid-glass-nav-bar:hover {
-  border-top-color: rgba(255, 255, 255, 0.65);
+  border-top-color: rgba(134, 239, 172, 0.65);
   box-shadow: 0 24px 56px -8px rgba(0, 0, 0, 0.9),
-    0 0 30px -2px rgba(56, 189, 248, 0.28),
+    0 0 32px -2px rgba(21, 128, 61, 0.35),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.55);
 }
 
@@ -252,21 +252,23 @@ blockquote,
 .liquid-glass-bento,
 .jelly-bento {
   position: relative;
-  background: linear-gradient(
-    145deg,
-    rgba(52, 211, 153, 0.09) 0%,
-    rgba(4, 34, 22, 0.88) 52%,
-    rgba(1, 14, 9, 0.96) 100%
-  );
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border-top: 1px solid rgba(52, 211, 153, 0.42);
-  border-left: 1px solid rgba(16, 185, 129, 0.18);
-  border-right: 1px solid rgba(5, 150, 105, 0.15);
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(21, 128, 61, 0.15), transparent 56%),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075) 0%,
+      rgba(8, 26, 15, 0.76) 52%,
+      rgba(2, 7, 4, 0.96) 100%
+    );
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  border-top: 1px solid rgba(134, 239, 172, 0.32);
+  border-left: 1px solid rgba(134, 239, 172, 0.18);
+  border-right: 1px solid rgba(202, 138, 4, 0.16);
   border-bottom: 1px solid rgba(0, 0, 0, 0.6);
   box-shadow:
     0 18px 44px -8px rgba(0, 0, 0, 0.88),
-    0 0 30px -4px rgba(16, 185, 129, 0.18),
+    0 0 30px -4px rgba(21, 128, 61, 0.18),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.35);
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -279,10 +281,10 @@ blockquote,
 .liquid-glass-bento:hover,
 .jelly-bento:hover {
   transform: translateY(-1px);
-  border-top-color: rgba(110, 231, 183, 0.7);
+  border-top-color: rgba(134, 239, 172, 0.65);
   box-shadow: 0 24px 54px -10px rgba(0, 0, 0, 0.94),
-    0 0 36px -2px rgba(16, 185, 129, 0.32),
-    0 0 16px -4px rgba(245, 158, 11, 0.2),
+    0 0 36px -2px rgba(21, 128, 61, 0.36),
+    0 0 20px -4px rgba(202, 138, 4, 0.25),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.5);
 }
 
@@ -295,18 +297,18 @@ blockquote,
 .liquid-glass-sidebar {
   background: linear-gradient(
     165deg,
-    rgba(255, 255, 255, 0.07) 0%,
-    rgba(3, 26, 18, 0.88) 55%,
-    rgba(1, 10, 6, 0.98) 100%
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(8, 26, 16, 0.86) 55%,
+    rgba(2, 8, 4, 0.98) 100%
   );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(52, 211, 153, 0.38);
-  border-left: 1px solid rgba(16, 185, 129, 0.16);
-  border-right: 1px solid rgba(5, 150, 105, 0.16);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-top: 1px solid rgba(134, 239, 172, 0.32);
+  border-left: 1px solid rgba(134, 239, 172, 0.16);
+  border-right: 1px solid rgba(202, 138, 4, 0.16);
   border-bottom: 1px solid rgba(0, 0, 0, 0.6);
   box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.82),
-    0 0 24px -4px rgba(16, 185, 129, 0.15),
+    0 0 24px -4px rgba(21, 128, 61, 0.16),
     inset 0 1.5px 2px rgba(255, 255, 255, 0.3);
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -641,35 +643,35 @@ summary {
 }
 
 :root {
-  --theme-bg: #050b1a;
-  --theme-primary: #50c878;
-  --theme-secondary: #d4af37;
-  --theme-tertiary: #10b981;
-  --theme-glow: rgba(80, 200, 120, 0.34);
-  --theme-glow-strong: rgba(212, 175, 55, 0.28);
-  --theme-text: #d9f7e6;
+  --theme-bg: #020704;
+  --theme-primary: #15803d;
+  --theme-secondary: #ca8a04;
+  --theme-tertiary: #166534;
+  --theme-glow: rgba(21, 128, 61, 0.38);
+  --theme-glow-strong: rgba(202, 138, 4, 0.32);
+  --theme-text: #ecfdf5;
 }
 
 html {
-  background-color: #050b1a;
+  background-color: #020704;
 }
 
 body {
-  background-color: #050b1a;
+  background-color: #020704;
   background-image:
-    radial-gradient(ellipse at 10% 8%, rgba(80, 200, 120, 0.2) 0%, transparent 44%),
-    radial-gradient(ellipse at 90% 10%, rgba(212, 175, 55, 0.16) 0%, transparent 46%),
-    radial-gradient(ellipse at 50% 108%, rgba(16, 185, 129, 0.18) 0%, transparent 60%),
-    linear-gradient(180deg, #040918 0%, #071326 52%, #030814 100%);
+    radial-gradient(ellipse at 12% 8%, rgba(21, 128, 61, 0.32) 0%, transparent 46%),
+    radial-gradient(ellipse at 88% 12%, rgba(202, 138, 4, 0.24) 0%, transparent 46%),
+    radial-gradient(ellipse at 50% 108%, rgba(22, 101, 52, 0.35) 0%, transparent 62%),
+    linear-gradient(180deg, #020704 0%, #06150c 52%, #020704 100%);
 }
 
 .ultraThinMaterial {
   background:
-    radial-gradient(120% 120% at 0% 0%, rgba(80, 200, 120, 0.12), transparent 56%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(8, 20, 40, 0.76) 52%, rgba(3, 8, 18, 0.93));
+    radial-gradient(120% 120% at 0% 0%, rgba(21, 128, 61, 0.15), transparent 56%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(8, 26, 15, 0.74) 52%, rgba(2, 7, 4, 0.94));
   backdrop-filter: blur(18px) saturate(175%);
   -webkit-backdrop-filter: blur(18px) saturate(175%);
-  border: 1px solid rgba(80, 200, 120, 0.24);
+  border: 1px solid rgba(134, 239, 172, 0.22);
   box-shadow:
     0 16px 44px -14px rgba(0, 0, 0, 0.92),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
@@ -684,31 +686,66 @@ body {
 
 .ultraThinMaterial:hover {
   background:
-    radial-gradient(120% 120% at 0% 0%, rgba(80, 200, 120, 0.3), transparent 56%),
-    radial-gradient(120% 120% at 100% 100%, rgba(212, 175, 55, 0.24), transparent 62%),
-    linear-gradient(145deg, rgba(220, 255, 235, 0.1), rgba(8, 28, 48, 0.82) 52%, rgba(2, 7, 16, 0.95));
-  border-color: rgba(80, 200, 120, 0.5);
+    radial-gradient(120% 120% at 0% 0%, rgba(21, 128, 61, 0.32), transparent 56%),
+    radial-gradient(120% 120% at 100% 100%, rgba(202, 138, 4, 0.26), transparent 62%),
+    linear-gradient(145deg, rgba(236, 253, 245, 0.11), rgba(12, 38, 22, 0.82) 52%, rgba(3, 11, 6, 0.95));
+  border-color: rgba(134, 239, 172, 0.48);
   box-shadow:
     0 22px 58px -16px rgba(0, 0, 0, 0.95),
-    0 0 44px -8px rgba(80, 200, 120, 0.5),
-    0 0 60px -18px rgba(212, 175, 55, 0.4),
-    inset 0 1px 0 0 rgba(220, 255, 235, 0.36);
+    0 0 44px -8px rgba(21, 128, 61, 0.55),
+    0 0 50px -14px rgba(202, 138, 4, 0.35),
+    inset 0 1px 0 0 rgba(236, 253, 245, 0.36);
 }
 
 .liquid-glass-bento:hover {
   box-shadow:
     0 24px 54px -10px rgba(0, 0, 0, 0.9),
-    0 0 32px -4px rgba(80, 200, 120, 0.34),
-    0 0 48px -12px rgba(212, 175, 55, 0.28),
-    inset 0 1.5px 0 0 rgba(220, 255, 235, 0.42);
+    0 0 32px -4px rgba(21, 128, 61, 0.4),
+    0 0 48px -12px rgba(202, 138, 4, 0.3),
+    inset 0 1.5px 0 0 rgba(236, 253, 245, 0.42);
 }
 
 .liquid-glass-dock:hover,
 .liquid-glass-longbar:hover {
   box-shadow:
     0 24px 56px -10px rgba(0, 0, 0, 0.92),
-    0 0 38px -6px rgba(80, 200, 120, 0.36),
-    inset 0 1.5px 0 0 rgba(220, 255, 235, 0.4);
+    0 0 38px -6px rgba(21, 128, 61, 0.4),
+    inset 0 1.5px 0 0 rgba(236, 253, 245, 0.4);
+}
+
+/* ==================== VISIONOS PER-CARD CURSOR SPECULAR SPOTLIGHT ==================== */
+.liquid-glass-bento,
+.liquid-card-flagship,
+.ultraThinMaterial {
+  position: relative;
+  transition:
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.28s ease,
+    box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-bento::after,
+.liquid-card-flagship::after,
+.ultraThinMaterial::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    460px circle at var(--card-mouse-x, 50%) var(--card-mouse-y, 0%),
+    rgba(134, 239, 172, 0.085),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.liquid-glass-bento:hover::after,
+.liquid-card-flagship:hover::after,
+.ultraThinMaterial:hover::after {
+  opacity: 1;
 }
 
 /* ==================== 120 FPS HARDWARE-ACCELERATED LIQUID GLASS CAUSTICS ==================== */

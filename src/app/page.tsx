@@ -294,12 +294,12 @@ export default function IBBusinessManagementStudyDashboardPage() {
                 {/* Syllabus Unit Context Banner - 100% Full-Width Bulletproof Native Card */}
                 <div className="liquid-glass-bento rounded-3xl p-5 mb-5 border border-white/15 shadow-xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
-                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-sky-300">
-                      <BookOpen className="w-4 h-4 shrink-0 text-sky-400" />
+                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-emerald-300">
+                      <BookOpen className="w-4 h-4 shrink-0 text-emerald-400" />
                       <span className="font-bold text-sm text-white">{activeUnit.title}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-400/15 text-sky-300 border border-sky-400/30">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
                         {activeUnit.badge}
                       </span>
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono text-slate-300 border border-white/10 bg-white/5">
@@ -332,7 +332,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
                       <div className="text-base sm:text-lg font-bold text-white">
                         {nextTopic.displayCode}: {nextTopic.title}
                       </div>
-                      <div className="text-xs text-sky-300">
+                      <div className="text-xs text-emerald-300">
                         {nextTopic.subtitle}
                       </div>
                     </div>
@@ -382,12 +382,12 @@ export default function IBBusinessManagementStudyDashboardPage() {
                 <div className="liquid-glass-bento rounded-3xl p-4 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h2 className="text-base font-bold text-white flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-sky-400" />
+                      <Layers className="w-4 h-4 text-emerald-400" />
                       Continuous Flow Stream ({filteredTopics.length} Topics)
                     </h2>
                     <p className="text-xs text-slate-400">
                       All syllabus topics rendered in a continuous feed with WebKit GPU &amp;{" "}
-                      <code className="text-sky-300">content-visibility: auto</code>{" "}
+                      <code className="text-emerald-300">content-visibility: auto</code>{" "}
                       optimization.
                     </p>
                   </div>
@@ -409,7 +409,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
                         onClick={() => setActiveUnitFilter(tab.id as UnitId | "all")}
                         className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
                           activeUnitFilter === tab.id
-                            ? "bg-sky-500/30 text-white border border-sky-400/50"
+                            ? "bg-emerald-500/30 text-white border border-emerald-400/50"
                             : "liquid-glass-pill text-slate-300 hover:text-white"
                         }`}
                       >
@@ -435,7 +435,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
                         setSearchQuery("");
                         setActiveUnitFilter("all");
                       }}
-                      className="liquid-glass-pill px-4 py-2 rounded-xl text-xs font-mono text-sky-300 cursor-pointer"
+                      className="liquid-glass-pill px-4 py-2 rounded-xl text-xs font-mono text-emerald-300 cursor-pointer"
                     >
                       Reset Filters
                     </button>
