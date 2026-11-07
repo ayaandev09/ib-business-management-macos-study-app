@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TopicData, CONCEPTS_TAXONOMY } from "@/data";
 import { useStudyStore } from "@/store/useStudyStore";
 import { RecallFlipCard } from "@/components/RecallFlipCard";
+import { AcademicNotesSurface } from "@/components/AcademicNotesSurface";
 import {
   Briefcase,
   Building2,
@@ -345,42 +346,14 @@ export function BusinessRightInspector({
 
           {/* TAB 4: PERSONAL NOTES */}
           {activeTab === "notes" && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
-                  <Edit3 className="w-3.5 h-3.5" />
-                  Strategic Topic Notes
-                </span>
-                <button
-                  onClick={handleCopyNote}
-                  className="flex items-center gap-1 text-[10px] font-mono text-slate-400 hover:text-white transition-colors cursor-pointer"
-                >
-                  {copiedNote ? (
-                    <>
-                      <Check className="w-3 h-3 text-emerald-400" />
-                      <span className="text-emerald-400">Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3 h-3" />
-                      <span>Copy</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              <textarea
-                value={userNote}
-                onChange={(e) => setTopicNote(topic.id, e.target.value)}
-                placeholder="Draft case study evaluation notes, formula shortcuts, or revision bullet points for this unit..."
-                rows={10}
-                className="w-full rounded-2xl bg-black/40 border border-white/10 p-3 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-400/50 resize-none font-sans leading-relaxed"
-              />
-
-              <p className="text-[10px] text-slate-400 font-mono">
-                💾 Auto-saved to local encrypted storage. Persists across sessions.
-              </p>
-            </div>
+            <AcademicNotesSurface
+              note={userNote}
+              onChange={(text) => setTopicNote(topic.id, text)}
+              title="Strategic Topic Notes"
+              itemCode={topic.displayCode}
+              minRows={10}
+              accentColor="#10b981"
+            />
           )}
         </div>
       </div>

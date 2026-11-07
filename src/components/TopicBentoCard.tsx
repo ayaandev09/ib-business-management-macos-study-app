@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { TopicData, SYLLABUS_UNITS, CONCEPTS_TAXONOMY } from "@/data";
 import { useStudyStore } from "@/store/useStudyStore";
 import { RecallFlipCard } from "@/components/RecallFlipCard";
+import { AcademicNotesSurface } from "@/components/AcademicNotesSurface";
 import {
   CheckCircle2,
   Circle,
@@ -851,16 +852,14 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
 
         {showScratchpad && (
           <div className="mt-3 pt-3 border-t border-white/10 animate-in fade-in duration-200">
-            <textarea
-              value={noteText}
-              onChange={(e) => setTopicNote(topic.id, e.target.value)}
-              placeholder="Jot down quick personal revision bullets, mnemonics, or questions for class..."
-              rows={4}
-              className="w-full p-3.5 rounded-2xl bg-slate-950/70 border border-white/15 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 resize-y font-mono"
+            <AcademicNotesSurface
+              note={noteText}
+              onChange={(text) => setTopicNote(topic.id, text)}
+              title="Personal Seminar & Case Marginalia"
+              itemCode={topic.displayCode}
+              minRows={5}
+              accentColor="#10b981"
             />
-            <span className="font-mono text-[10px] text-slate-500 block mt-1">
-              ✓ Auto-saved locally in browser storage
-            </span>
           </div>
         )}
       </section>
