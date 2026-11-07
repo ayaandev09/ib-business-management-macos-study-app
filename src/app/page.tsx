@@ -314,7 +314,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
                 </div>
 
                 {/* Active Topic Bento Grid with Buttery Smooth Swap */}
-                <div key={activeTopic.id} className="liquid-chapter-swap">
+                <div key={activeTopic.id} data-tour="study-bento" className="liquid-chapter-swap">
                   <TopicBentoCard
                     topic={activeTopic}
                     isDeferred={false}
@@ -515,6 +515,10 @@ export default function IBBusinessManagementStudyDashboardPage() {
       isOpen={isWalkthroughOpen}
       onClose={() => setIsWalkthroughOpen(false)}
       onSelectGoal={(goal) => setStudyGoal(goal)}
+      isInspectorOpen={isInspectorOpen}
+      onOpenInspector={() => {
+        if (!isInspectorOpen) toggleInspector();
+      }}
     />
     </>
   );

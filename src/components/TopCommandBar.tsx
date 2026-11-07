@@ -180,6 +180,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
   return (
     <>
       <header
+        data-tour="command-bar"
         className="liquid-glass-long-bar !rounded-3xl overflow-hidden p-2.5 sm:p-3 mb-3 flex flex-col gap-2 shadow-xl relative mac-drag-region transition-all z-20 w-full max-w-full"
       >
         {/* ========================================================================= */}
@@ -391,6 +392,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
         {/* ROW 2: UNIFIED SECTION SWITCHER TRACK (Clean, Streamlined macOS Segmented Bar) */}
         {/* ========================================================================= */}
         <nav
+          data-tour="nav-tabs"
           aria-label="Integrated Main Sections Bar"
           className="w-full grid grid-cols-5 gap-1 p-1 bg-black/50 border border-white/10 rounded-2xl shadow-inner relative max-w-full overflow-hidden"
         >
