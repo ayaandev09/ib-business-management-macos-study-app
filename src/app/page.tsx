@@ -244,7 +244,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
 
       {/* 2. Main Study Dashboard - Buttery Liquid Glass reveal into main view */}
       <div
-        className={`mac-dashboard-shell transition-opacity duration-700 ease-out ${
+        className={`mac-dashboard-shell ${showMainUI ? "app-revealed" : ""} transition-opacity duration-700 ease-out ${
           showMainUI
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none select-none"
