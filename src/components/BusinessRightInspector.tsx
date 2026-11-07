@@ -12,6 +12,7 @@ import {
   BookmarkCheck,
   CheckCircle2,
   PanelRightClose,
+  X,
   Edit3,
   Copy,
   Check,
@@ -82,26 +83,26 @@ export function BusinessRightInspector({
           }}
           style={{ willChange: "transform, opacity" }}
           data-tour="inspector"
-          className="hidden xl:block w-[320px] xl:w-[340px] shrink-0 sticky top-5 z-20"
+          className="w-80 lg:w-88 shrink-0 sticky top-3 select-none overflow-hidden transition-all z-10"
         >
-          <div className="liquid-glass-bento rounded-3xl p-4 border border-emerald-500/30 bg-slate-950/70 backdrop-blur-2xl shadow-2xl flex flex-col max-h-[calc(100vh-2.5rem)] overflow-hidden">
+          <div className="liquid-glass-bento rounded-3xl p-4 border border-emerald-500/30 bg-slate-950/70 backdrop-blur-2xl shadow-2xl flex flex-col max-h-[calc(100vh-1.5rem)] overflow-hidden">
             {/* Top Header */}
-            <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-white/10 shrink-0 min-h-[44px]">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center justify-center shrink-0">
-                  <Briefcase className="w-5 h-5" />
-                </span>
+            <div className="flex items-center justify-between gap-2 pb-2.5 mb-3 border-b border-white/10 shrink-0 min-h-[44px]">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="p-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 shrink-0">
+                  <Briefcase className="w-4 h-4" />
+                </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase block">
-                    C-Suite Analytical Inspector
+                  <span className="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase block truncate">
+                    C-SUITE INSPEKTOR
                   </span>
-                  <h3 className="text-xs font-bold text-white truncate">
+                  <h3 className="text-xs font-semibold text-white tracking-tight truncate">
                     {topic.displayCode} · {topic.title}
                   </h3>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   onClick={() => {
                     toggleTopicComplete(topic.id);
@@ -110,9 +111,9 @@ export function BusinessRightInspector({
                     }
                   }}
                   title={isCompleted ? "Mark Incomplete" : "Mark Topic Mastered"}
-                  className={`p-2 rounded-xl text-xs font-mono transition-all duration-150 cursor-pointer active:scale-85 select-none ${
+                  className={`p-1.5 rounded-xl text-xs font-mono transition-all duration-150 cursor-pointer active:scale-95 select-none ${
                     isCompleted
-                      ? "bg-emerald-500/25 text-emerald-300 border border-emerald-400/40 shadow-emerald-500/20"
+                      ? "bg-emerald-500/25 text-emerald-300 border border-emerald-400/40"
                       : "bg-white/5 text-slate-400 hover:text-white border border-white/10 hover:bg-white/10"
                   }`}
                 >
@@ -120,11 +121,10 @@ export function BusinessRightInspector({
                 </button>
                 <button
                   onClick={onToggle}
-                  title="Tuck Inspector into Top Navigation Bar (⌘I)"
-                  className="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-400/30 text-emerald-200 hover:text-white transition-all text-xs font-mono flex items-center gap-1.5 cursor-pointer soft-button shrink-0 shadow-sm"
+                  title="Tuck Inspector away (⌘I)"
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 >
-                  <PanelRightClose className="w-3.5 h-3.5" />
-                  <span className="font-semibold">Tuck to Bar ↑</span>
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
