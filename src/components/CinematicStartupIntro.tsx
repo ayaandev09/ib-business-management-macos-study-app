@@ -1,77 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Compass,
-  Zap,
-  TrendingUp,
-  X,
-  Layers,
-  Briefcase
-} from "lucide-react";
-import { useStudyStore } from "@/store/useStudyStore";
-import { ALL_TOPICS } from "@/data";
-import { IBBusinessAppLogo } from "./IBBusinessAppLogo";
+import React, { useEffect, useRef, useCallback } from "react";
+import { motion } from "framer-motion";
+import { LiquidGlassLogo } from "./liquid-glass-logo";
 
-/**
- * IB Business Management Dedicated Vector Logo Emblem
- */
-const BusinessManagementLogoSVG: React.FC<{ className?: string }> = ({ className = "w-full h-full" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 512 512"
-    width="100%"
-    height="100%"
-    preserveAspectRatio="xMidYMid meet"
-    className={className}
-    fill="none"
-  >
-    <defs>
-      <radialGradient id="bizGlow" cx="50%" cy="48%" r="65%">
-        <stop offset="0%" stopColor="#00802f" stopOpacity="0.4" />
-        <stop offset="45%" stopColor="#0284c7" stopOpacity="0.18" />
-        <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="emeraldGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#6ee7b7" />
-        <stop offset="30%" stopColor="#10b981" />
-        <stop offset="70%" stopColor="#00802f" />
-        <stop offset="100%" stopColor="#064e3b" />
-      </linearGradient>
-      <linearGradient id="sapphireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#7dd3fc" />
-        <stop offset="50%" stopColor="#0284c7" />
-        <stop offset="100%" stopColor="#082f49" />
-      </linearGradient>
-      <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#fef08a" />
-        <stop offset="50%" stopColor="#f59e0b" />
-        <stop offset="100%" stopColor="#b45309" />
-      </linearGradient>
-    </defs>
-
-    {/* Ambient Gauge Shield */}
-    <circle cx="256" cy="256" r="236" fill="url(#bizGlow)" />
-    <circle cx="256" cy="256" r="220" fill="#040d12" stroke="url(#emeraldGrad)" strokeWidth="4" strokeOpacity="0.9" />
-    <circle cx="256" cy="256" r="206" fill="none" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="6 6" strokeOpacity="0.45" />
-
-    {/* Modern Hexagonal Corporate Matrix Core */}
-    <polygon points="256,130 365,193 365,319 256,382 147,319 147,193" fill="#02140c" stroke="url(#emeraldGrad)" strokeWidth="3" opacity="0.8" />
-
-    {/* Executive Briefcase / Matrix Geometry */}
-    <g>
-      <rect x="180" y="210" width="152" height="110" rx="14" fill="#042014" stroke="url(#emeraldGrad)" strokeWidth="4" />
-      <path d="M 220 210 L 220 185 C 220 174, 230 165, 241 165 L 271 165 C 282 165, 292 174, 292 185 L 292 210" fill="none" stroke="url(#goldAccent)" strokeWidth="4" strokeLinecap="round" />
-      <line x1="180" y1="250" x2="332" y2="250" stroke="#10b981" strokeWidth="2" strokeOpacity="0.6" />
-      <circle cx="256" cy="250" r="7" fill="#ffffff" stroke="url(#goldAccent)" strokeWidth="2" />
-    </g>
-  </svg>
-);
+const APP_LOGO_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0ibm9uZSI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImliRW1lcmFsZEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYTdmM2QwIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iIzM0ZDM5OSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI3MCUiIHN0b3AtY29sb3I9IiMwNTk2NjkiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzA2NGUzYiIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9ImliRW1lcmFsZEF1cmEiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMGI5ODEiIHN0b3Atb3BhY2l0eT0iMC40IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjYwJSIgc3RvcC1jb2xvcj0iIzA1OTY2OSIgc3RvcC1vcGFjaXR5PSIwLjE1IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNjRlM2IiIHN0b3Atb3BhY2l0eT0iMCIgLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImliU2FwcGhpcmVHcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdkZDNmYyIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMwMjg0YzciIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzA3NTk4NSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImliSmFkZUdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDU5NjY5IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzA0Nzg1NyIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDY0ZTNiIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iaWJHb2xkVmVjdG9yIiB4MT0iMCUiIHkxPSIxMDAlIiB4Mj0iMTAwJSIgeTI9IjAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y1OWUwYiIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiNmYmJmMjQiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZlZjA4YSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjQwIiBmaWxsPSJ1cmwoI2liRW1lcmFsZEF1cmEpIiAvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjMwIiBmaWxsPSIjMDYxMjFhIiBzdHJva2U9InVybCgjaWJFbWVyYWxkR3JhZCkiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLW9wYWNpdHk9IjAuOTUiIC8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIyMTQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzEwYjk4MSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtZGFzaGFycmF5PSI4IDgiIHN0cm9rZS1vcGFjaXR5PSIwLjY1IiAvPgogIDxsaW5lIHgxPSIyNTYiIHkxPSI1NiIgeDI9IjI1NiIgeTI9IjQ1NiIgc3Ryb2tlPSIjMDU5NjY5IiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLW9wYWNpdHk9IjAuMyIgc3Ryb2tlLWRhc2hhcnJheT0iNCA2IiAvPgogIDxsaW5lIHgxPSI1NiIgeTE9IjI1NiIgeDI9IjQ1NiIgeTI9IjI1NiIgc3Ryb2tlPSIjMDU5NjY5IiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLW9wYWNpdHk9IjAuMyIgc3Ryb2tlLWRhc2hhcnJheT0iNCA2IiAvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMTcwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMjg0YzciIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNCIgLz4KICA8Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDI4NGM3IiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQiIC8+CiAgPHJlY3QgeD0iMTMwIiB5PSIyNzAiIHdpZHRoPSI0NiIgaGVpZ2h0PSIxMTAiIHJ4PSI4IiBmaWxsPSJ1cmwoI2liSmFkZUdyYWQpIiBzdHJva2U9IiMzNGQzOTkiIHN0cm9rZS13aWR0aD0iMiIgLz4KICA8cmVjdCB4PSIxOTQiIHk9IjIyMCIgd2lkdGg9IjQ2IiBoZWlnaHQ9IjE2MCIgcng9IjgiIGZpbGw9InVybCgjaWJFbWVyYWxkR3JhZCkiIHN0cm9rZT0iI2E3ZjNkMCIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogIDxyZWN0IHg9IjI1OCIgeT0iMTcwIiB3aWR0aD0iNDYiIGhlaWdodD0iMjEwIiByeD0iOCIgZmlsbD0idXJsKCNpYlNhcHBoaXJlR3JhZCkiIHN0cm9rZT0iIzdkZDNmYyIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogIDxyZWN0IHg9IjMyMiIgeT0iMTIwIiB3aWR0aD0iNDYiIGhlaWdodD0iMjYwIiByeD0iOCIgZmlsbD0idXJsKCNpYlNhcHBoaXJlR3JhZCkiIHN0cm9rZT0iIzM4YmRmOCIgc3Ryb2tlLXdpZHRoPSIyLjUiIC8+CiAgPHBhdGggZD0iTSAxMjAgMzQwIFEgMjIwIDI4MCwgMjcwIDE5MCBUIDM4NCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNpYkdvbGRWZWN0b3IpIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz4KICA8cG9seWdvbiBwb2ludHM9IjM4NCwxMDAgMzU0LDEwNiAzNzYsMTI4IiBmaWxsPSIjZmVmMDhhIiBzdHJva2U9IiNkOTc3MDYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgLz4KICA8Y2lyY2xlIGN4PSIxNTMiIGN5PSIyNzAiIHI9IjYiIGZpbGw9IiNmZWYwOGEiIHN0cm9rZT0iI2Q5NzcwNiIgc3Ryb2tlLXdpZHRoPSIyIiAvPgogIDxjaXJjbGUgY3g9IjIxNyIgY3k9IjIyMCIgcj0iNiIgZmlsbD0iI2ZlZjA4YSIgc3Ryb2tlPSIjZDk3NzA2IiBzdHJva2Utd2lkdGg9IjIiIC8+CiAgPGNpcmNsZSBjeD0iMjgxIiBjeT0iMTcwIiByPSI2IiBmaWxsPSIjZmVmMDhhIiBzdHJva2U9IiNkOTc3MDYiIHN0cm9rZS13aWR0aD0iMiIgLz4KICA8Y2lyY2xlIGN4PSIzNDUiIGN5PSIxMjAiIHI9IjciIGZpbGw9IiNmZWYwOGEiIHN0cm9rZT0iI2Q5NzcwNiIgc3Ryb2tlLXdpZHRoPSIyIiAvPgo8L3N2Zz4=";
 
 interface CinematicStartupIntroProps {
   isOpen: boolean;
@@ -84,104 +17,36 @@ export const CinematicStartupIntro: React.FC<CinematicStartupIntroProps> = ({
   onClose,
   onComplete,
 }) => {
-  const [currentTime, setCurrentTime] = useState("");
-  const [sessionSeconds, setSessionSeconds] = useState(0);
-  const [countdown, setCountdown] = useState(4);
-  const [isDismissing, setIsDismissing] = useState(false);
   const isDismissingRef = useRef(false);
-
-  const { completedTopics, activeTopicId, setActiveTopic } = useStudyStore();
-
-  // 1. Live real-time digital clock
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(
-        now.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-      );
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // 2. Active study session timer
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSessionSeconds((prev) => prev + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleDismiss = useCallback(() => {
     if (isDismissingRef.current) return;
     isDismissingRef.current = true;
     onClose();
-    if (onComplete) onComplete();
+    onComplete?.();
   }, [onClose, onComplete]);
 
-  // 3. Glancing countdown: 4.5s hold time to read key priorities
+  // Automatic dismiss after the liquid glass simulation finishes (~4.5s)
   useEffect(() => {
     if (!isOpen) return;
-    isDismissingRef.current = false;
-    let currentCount = 4;
-    setCountdown(currentCount);
-
-    const timer = setInterval(() => {
-      currentCount -= 1;
-      setCountdown(Math.max(0, currentCount));
-      if (currentCount <= 0) {
-        clearInterval(timer);
-        handleDismiss();
-      }
-    }, 1100);
-
-    return () => clearInterval(timer);
+    const timer = setTimeout(() => {
+      handleDismiss();
+    }, 4500);
+    return () => clearTimeout(timer);
   }, [isOpen, handleDismiss]);
 
-  // 4. Keyboard shortcuts: Space/Enter/Escape to instantly enter
+  // Keyboard shortcut listener (Space, Enter, Esc)
   useEffect(() => {
     if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === " " || e.key === "Enter") {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         handleDismiss();
       }
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, handleDismiss]);
-
-  // Live syllabus metrics computation
-  const totalTopicsCount = ALL_TOPICS.length;
-  const completedCount = useMemo(() => {
-    return Object.values(completedTopics).filter(Boolean).length;
-  }, [completedTopics]);
-
-  const masteryPercent =
-    totalTopicsCount > 0
-      ? Math.round((completedCount / totalTopicsCount) * 100)
-      : 0;
-
-  // Find the exact next topic STILL TO DO
-  const nextTodoTopic = useMemo(() => {
-    const uncompleted = ALL_TOPICS.find((t) => !completedTopics[t.id]);
-    if (uncompleted) return uncompleted;
-    return ALL_TOPICS.find((t) => t.id === activeTopicId) || ALL_TOPICS[0];
-  }, [completedTopics, activeTopicId]);
-
-  const remainingTopicsCount = totalTopicsCount - completedCount;
-  const estimatedMins = remainingTopicsCount * 14;
-
-  const formattedSessionTime = useMemo(() => {
-    const mins = Math.floor(sessionSeconds / 60);
-    const secs = sessionSeconds % 60;
-    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  }, [sessionSeconds]);
 
   if (!isOpen) return null;
 
@@ -191,198 +56,78 @@ export const CinematicStartupIntro: React.FC<CinematicStartupIntroProps> = ({
       animate={{ opacity: 1 }}
       exit={{
         opacity: 0,
-        transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+        scale: 1.02,
+        transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
       }}
       onClick={handleDismiss}
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 select-none bg-[#020705] backdrop-blur-2xl overflow-hidden cursor-pointer"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 select-none bg-[#060913] overflow-hidden cursor-pointer"
       style={{
-        background:
-          "radial-gradient(circle at 50% 35%, rgba(16,185,129,0.22) 0%, rgba(2,7,5,0.98) 75%)",
+        background: "radial-gradient(circle at 50% 50%, #0a1b24 0%, #061118 50%, #060913 100%)",
       }}
     >
-      {/* Static GPU-composited Ambient Aura Blobs (Zero CPU overhead) */}
-      <div
-        className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/15 blur-[80px] pointer-events-none"
-        style={{ transform: "translateZ(0)" }}
-      />
-      <div
-        className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-sky-500/12 blur-[80px] pointer-events-none"
-        style={{ transform: "translateZ(0)" }}
-      />
-
-      {/* Central Liquid Glass Briefing HUD */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 14 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{
-          opacity: 0,
-          scale: 0.98,
-          y: -10,
-          transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] },
-        }}
-        transition={{
-          duration: 0.4,
-          ease: [0.16, 1, 0.3, 1],
-        }}
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-lg p-6 sm:p-7 rounded-[2rem] border border-white/12 ring-1 ring-inset ring-white/10 bg-white/[0.04] dark:bg-black/55 backdrop-blur-2xl shadow-[0_32px_80px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_24px_rgba(255,255,255,0.03)] flex flex-col text-left overflow-hidden cursor-default"
-      >
-        {/* Specular Ambient Reflection Sheen */}
-        <div className="absolute inset-x-0 top-0 h-32 rounded-t-[2rem] bg-gradient-to-b from-white/[0.08] via-white/[0.02] to-transparent pointer-events-none" />
-
-        {/* Authentic Liquid Glass Logo Showcase — 120 FPS Metal Accelerated */}
-        <div className="w-full h-40 sm:h-48 rounded-2xl overflow-hidden relative mb-4 bg-gradient-to-b from-black/90 via-black/75 to-[#02140d] border border-emerald-400/40 shadow-2xl flex items-center justify-center p-4 relative">
-          {/* Rotating Ambient Caustic Liquid Halo */}
-          <div
-            className="absolute w-60 h-60 rounded-full pointer-events-none liquid-caustic-halo"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(16,185,129,0.35) 0%, rgba(6,78,59,0.22) 45%, transparent 70%)",
-            }}
+      {/* Center Liquid Glass Logo Animation */}
+      <div className="relative w-full max-w-3xl flex flex-col items-center justify-center pointer-events-none">
+        <div className="w-full h-72 sm:h-80 flex items-center justify-center">
+          <LiquidGlassLogo
+            logo={APP_LOGO_SVG}
+            mark="logo"
+            text="IB BUSINESS"
+            ending="wordmark"
+            fontSize={48}
+            fontFamily="'Cinzel', 'Times New Roman', Georgia, serif"
+            fontWeight={800}
+            letterSpacing={0.08}
+            theme="dark"
+            logoColor="original"
+            logoRelief={0.8}
+            textColor="#dcfce7"
+            tileColor="#081c1c"
+            background="transparent"
+            depth={1.3}
+            dispersion={1.15}
+            relief={1.0}
+            caustics={1.35}
+            highlights={1.25}
+            bloom={0.55}
+            speed={1.0}
+            loop={false}
+            style={{ background: "transparent" }}
+            className="w-full h-full"
           />
-
-          {/* Liquid Glass Breathing Emblem */}
-          <div className="w-28 h-28 sm:w-32 sm:h-32 relative z-10 flex items-center justify-center liquid-logo-float">
-            <IBBusinessAppLogo className="w-full h-full object-contain filter drop-shadow-[0_0_32px_rgba(16,185,129,0.65)]" />
-
-            {/* Slow Sweeping Liquid Glass Refraction Sheen Beam */}
-            <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
-              <div
-                className="w-full h-full liquid-glass-sheen"
-                style={{
-                  background:
-                    "linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.55) 50%, transparent 80%)",
-                }}
-              />
-            </div>
-            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 animate-ping pointer-events-none" />
-          </div>
         </div>
 
-        {/* Header: Logo, App Title & Live Telemetry Badge */}
-        <div className="flex items-center justify-between gap-3 mb-5 border-b border-white/10 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-400/35 p-1.5 flex items-center justify-center shrink-0 shadow-inner">
-              <BusinessManagementLogoSVG className="w-full h-full" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono font-bold tracking-widest text-emerald-400 uppercase">
-                  C-SUITE MATRIX // IB BM
-                </span>
-              </div>
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                IB Business Management Briefing
-              </h1>
-            </div>
-          </div>
-
-          {/* Live Continuous Sync Beacon */}
-          <div className="flex flex-col items-end shrink-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[10px] font-mono text-emerald-300 font-semibold shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              LIVE SYNC
-            </div>
-            <span className="text-[10px] font-mono text-slate-400 mt-1">
-              {currentTime}
+        {/* Elegant Minimalist Wordmark Subtitle */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-4 flex flex-col items-center gap-1.5 text-center"
+        >
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-emerald-300 uppercase">
+              EXECUTIVE CODEX · IB DIPLOMA PROGRAMME
             </span>
           </div>
-        </div>
-
-        {/* Priority Card: Next Focus / What Still Needs To Be Done */}
-        <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-400/30 mb-4 relative overflow-hidden backdrop-blur-md">
-          <div className="flex items-center justify-between gap-2 mb-1.5">
-            <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-300">
-              <Compass className="w-3 h-3 text-emerald-400" /> Up Next • Still To Do
-            </span>
-            <span className="text-[10px] font-mono text-slate-400">
-              {remainingTopicsCount} topics remaining
-            </span>
-          </div>
-          <h2 className="text-sm sm:text-base font-bold text-white mb-1 line-clamp-1">
-            {nextTodoTopic?.displayCode}: {nextTodoTopic?.title}
-          </h2>
-          <p className="text-xs text-emerald-100/70 line-clamp-2 font-sans mb-3">
-            {nextTodoTopic?.summary || "Continue through next core syllabus theoretical milestone."}
+          <p className="text-xs text-emerald-200/50 font-serif italic">
+            Strategy · Finance · Marketing · Operations · HRM
           </p>
+        </motion.div>
+      </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              if (nextTodoTopic) setActiveTopic(nextTodoTopic.id);
-              handleDismiss();
-            }}
-            className="w-full py-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
-          >
-            <span>Jump Directly to Topic</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </motion.button>
-        </div>
-
-        {/* Bento Status Grid: Syllabus Progress & Study Pulse */}
-        <div className="grid grid-cols-2 gap-3 mb-4 text-xs font-mono">
-          {/* Progress Box */}
-          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 flex flex-col justify-between backdrop-blur-md">
-            <div className="flex items-center justify-between text-slate-400 text-[10px] mb-2">
-              <span>MASTERY</span>
-              <span className="text-emerald-300 font-bold">{masteryPercent}%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden mb-2">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 transition-all duration-500"
-                style={{ width: `${masteryPercent}%` }}
-              />
-            </div>
-            <span className="text-slate-300 text-[11px] font-bold">
-              {completedCount} / {totalTopicsCount} Done
-            </span>
-          </div>
-
-          {/* Time & Session Box */}
-          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 flex flex-col justify-between backdrop-blur-md">
-            <div className="flex items-center justify-between text-slate-400 text-[10px] mb-1">
-              <span>PACE</span>
-              <span className="text-sky-300">~{estimatedMins}m left</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-slate-200 text-[11px] font-semibold my-1">
-              <Clock className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Session: {formattedSessionTime}</span>
-            </div>
-            <span className="text-[10px] text-emerald-400 font-semibold">
-              ● Nominal 120 FPS
-            </span>
-          </div>
-        </div>
-
-        {/* High-Yield Recall Anchor */}
-        <div className="px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 mb-4 text-[11px] backdrop-blur-md">
-          <span className="text-amber-300 font-bold font-mono text-[10px] uppercase block mb-0.5">
-            Key C-Suite Analytical Metric
-          </span>
-          <p className="text-slate-300 italic font-serif leading-snug line-clamp-2">
-            “Break-Even = Fixed Costs / (Selling Price - AVC) • Margin of Safety = Current Output - Break-Even.”
-          </p>
-        </div>
-
-        {/* Footer: Countdown & Skip Action */}
-        <div className="flex items-center justify-between pt-1 border-t border-white/10 text-xs">
-          <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
-            <span>Opening in</span>
-            <span className="text-emerald-300 font-bold">{countdown}s</span>
-            <span className="hidden sm:inline text-slate-500">• (Space to launch)</span>
-          </span>
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handleDismiss}
-            className="px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-xs transition-colors flex items-center gap-1.5 cursor-pointer border border-white/10 shadow-sm"
-          >
-            <span>Enter Now</span>
-            <ArrowRight className="w-3 h-3" />
-          </motion.button>
-        </div>
+      {/* Subtle Bottom Skip Hint */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.4 }}
+        transition={{ delay: 1.8, duration: 0.6 }}
+        className="absolute bottom-8 inset-x-0 text-center pointer-events-none"
+      >
+        <span className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+          Click anywhere or press Space to continue
+        </span>
       </motion.div>
     </motion.div>
   );
 };
+
+export default CinematicStartupIntro;
