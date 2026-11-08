@@ -684,7 +684,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
             How this syllabus topic maps to Creativity, Change, Ethics, and Sustainability.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="bento-adaptive-3">
             {topic.conceptTracking.map((track) => {
               const def = CONCEPTS_TAXONOMY[track.conceptId];
               return (
