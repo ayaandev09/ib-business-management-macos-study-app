@@ -62,12 +62,25 @@ export const CinematicStartupIntro: React.FC<CinematicStartupIntroProps> = ({
       onClick={handleDismiss}
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 select-none overflow-hidden cursor-pointer"
       style={{
-        backgroundColor: "#020704",
-        backgroundImage: `radial-gradient(ellipse at 12% 8%, rgba(21, 128, 61, 0.32) 0%, transparent 46%), radial-gradient(ellipse at 88% 12%, rgba(202, 138, 4, 0.24) 0%, transparent 46%), radial-gradient(ellipse at 50% 108%, rgba(22, 101, 52, 0.35) 0%, transparent 62%), linear-gradient(180deg, #020704 0%, #06150c 52%, #020704 100%)`,
+        backgroundColor: "rgba(6, 4, 2, 0.82)",
+        backdropFilter: "blur(28px) saturate(160%)",
+        WebkitBackdropFilter: "blur(28px) saturate(160%)",
+        backgroundImage: `radial-gradient(ellipse at 12% 10%, rgba(217, 119, 6, 0.18) 0%, transparent 48%), radial-gradient(ellipse at 88% 14%, rgba(180, 83, 9, 0.14) 0%, transparent 46%), radial-gradient(ellipse at 50% 92%, rgba(245, 158, 11, 0.12) 0%, transparent 58%), linear-gradient(180deg, rgba(6, 4, 2, 0.88) 0%, rgba(18, 11, 5, 0.76) 52%, rgba(6, 4, 2, 0.90) 100%)`,
       }}
     >
-      {/* Center Liquid Glass Logo Animation */}
-      <div className="relative w-full max-w-3xl flex flex-col items-center justify-center pointer-events-none">
+      {/* Center Liquid Glass Frosted Card */}
+      <div
+        className="relative w-full max-w-2xl sm:max-w-3xl rounded-3xl p-6 sm:p-10 flex flex-col items-center justify-center pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(24, 14, 5, 0.40) 50%, rgba(6, 4, 2, 0.60) 100%)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid rgba(245, 158, 11, 0.18)",
+          boxShadow:
+            "0 24px 60px -12px rgba(0, 0, 0, 0.75), inset 0 1px 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 1px 0 rgba(245, 158, 11, 0.08)",
+        }}
+      >
         <div className="w-full h-72 sm:h-80 flex items-center justify-center">
           <LiquidGlassLogo
             logo={APP_LOGO_SVG}
@@ -81,8 +94,8 @@ export const CinematicStartupIntro: React.FC<CinematicStartupIntroProps> = ({
             theme="dark"
             logoColor="original"
             logoRelief={0.8}
-            textColor="#dcfce7"
-            tileColor="#05180f"
+            textColor="#fef3c7"
+            tileColor="#180e05"
             background="transparent"
             depth={1.3}
             dispersion={1.15}
@@ -105,12 +118,12 @@ export const CinematicStartupIntro: React.FC<CinematicStartupIntroProps> = ({
           className="mt-4 flex flex-col items-center gap-1.5 text-center"
         >
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-mono text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-emerald-300 uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="font-mono text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-amber-300 uppercase">
               EXECUTIVE CODEX · IB DIPLOMA PROGRAMME
             </span>
           </div>
-          <p className="text-xs text-emerald-200/50 font-serif italic">
+          <p className="text-xs text-amber-200/50 font-serif italic">
             Strategy · Finance · Marketing · Operations · HRM
           </p>
         </motion.div>

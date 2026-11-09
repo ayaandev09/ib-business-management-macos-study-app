@@ -102,6 +102,24 @@ export default function IBBusinessManagementStudyDashboardPage() {
     return cleanup;
   }, []);
 
+  // Fluid layout window adaptation on dynamic resize and full-screen toggles
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window === "undefined") return;
+      const width = window.innerWidth;
+      const store = useStudyStore.getState();
+      if (width < 1024) {
+        if (!store.sidebarCollapsed) store.toggleSidebar();
+      }
+      if (width < 1280) {
+        if (store.isInspectorOpen) store.toggleInspector();
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Global Keyboard Shortcut: Cmd/Ctrl + I to toggle Analytical Inspector, Cmd/Ctrl + E to toggle Exam Sprint
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -244,7 +262,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
 
       {/* 2. Main Study Dashboard - Buttery Liquid Glass reveal into main view */}
       <div
-        className={`mac-dashboard-shell ${showMainUI ? "app-revealed" : ""} transition-opacity duration-700 ease-out ${
+        className={`relative min-h-screen w-full bg-[#060402] overflow-x-hidden text-slate-100 ${showMainUI ? "app-revealed" : ""} transition-opacity duration-700 ease-out ${
           showMainUI
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none select-none"
@@ -268,13 +286,13 @@ export default function IBBusinessManagementStudyDashboardPage() {
       {/* =====================================================================
           MAIN SHELL CONTAINER (MAC WIDESCREEN DASHBOARD)
           ===================================================================== */}
-      <div className="relative z-10 w-full flex flex-col lg:flex-row gap-4 xl:gap-5 items-start">
+      <div className="w-full max-w-[1720px] mx-auto p-2.5 sm:p-4 flex gap-4 xl:gap-5 items-start mac-dashboard-shell relative z-10">
         {/* Left Floating Sidebar */}
         <FloatingSidebar isMobileSheet={false} />
 
         {/* Right Main Content Workspace */}
         <main
-          className="flex-1 min-w-0 w-full pb-36 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="flex-1 min-w-0 w-full pb-36 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{ containerType: "inline-size" }}
         >
           {/* Top Command & View Switcher Long Bar */}
@@ -297,15 +315,15 @@ export default function IBBusinessManagementStudyDashboardPage() {
                 {/* Syllabus Unit Context Banner - 100% Full-Width Bulletproof Native Card */}
                 <div className="liquid-glass-bento rounded-3xl p-5 mb-5 border border-white/15 shadow-xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
-                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-emerald-300">
-                      <BookOpen className="w-4 h-4 shrink-0 text-emerald-400" />
+                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-amber-300">
+                      <BookOpen className="w-4 h-4 shrink-0 text-amber-400" />
                       <span className="font-bold text-sm text-white">{activeUnit.title}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-400/15 text-amber-300 border border-amber-400/30">
                         {activeUnit.badge}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono text-slate-300 border border-white/10 bg-white/5">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-mono text-slate-300 border border-white/10 bg-white/5">
                         {activeUnit.topics.length} Topics
                       </span>
                     </div>
@@ -335,12 +353,12 @@ export default function IBBusinessManagementStudyDashboardPage() {
                       <div className="text-base sm:text-lg font-bold text-white">
                         {nextTopic.displayCode}: {nextTopic.title}
                       </div>
-                      <div className="text-xs text-emerald-300">
+                      <div className="text-xs text-amber-300">
                         {nextTopic.subtitle}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2.5 shrink-0">
+                    <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
                       <ChromaticButton
                         onClick={() => {
                           if (!completedTopics[activeTopic.id]) {
@@ -349,7 +367,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
                           goToNextTopic();
                           window.scrollTo(0, 0);
                         }}
-                        color="#00802f"
+                        color="#d97706"
                         colorMode="spectrum"
                         speed={0.7}
                         paused={false}
@@ -366,7 +384,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
                         entranceBlur={10}
                         entranceDistance={20}
                         entranceScale={0.65}
-                        className="!min-w-[240px] !h-12 !px-6 !text-xs font-bold shadow-xl cursor-pointer"
+                        className="w-full sm:w-auto !min-w-[200px] sm:!min-w-[240px] !h-12 !px-6 !text-xs font-bold shadow-xl cursor-pointer"
                       >
                         <CheckCircle2 className="w-4 h-4 text-emerald-300 mr-2" />
                         <span>Complete {activeTopic.displayCode} &amp; Continue</span>
@@ -385,12 +403,12 @@ export default function IBBusinessManagementStudyDashboardPage() {
                 <div className="liquid-glass-bento rounded-3xl p-4 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h2 className="text-base font-bold text-white flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-emerald-400" />
+                      <Layers className="w-4 h-4 text-amber-400" />
                       Continuous Flow Stream ({filteredTopics.length} Topics)
                     </h2>
                     <p className="text-xs text-slate-400">
                       All syllabus topics rendered in a continuous feed with WebKit GPU &amp;{" "}
-                      <code className="text-emerald-300">content-visibility: auto</code>{" "}
+                      <code className="text-amber-300">content-visibility: auto</code>{" "}
                       optimization.
                     </p>
                   </div>
@@ -412,7 +430,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
                         onClick={() => setActiveUnitFilter(tab.id as UnitId | "all")}
                         className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
                           activeUnitFilter === tab.id
-                            ? "bg-emerald-500/30 text-white border border-emerald-400/50"
+                            ? "bg-amber-500/25 text-amber-200 border border-amber-400/40 shadow-sm"
                             : "liquid-glass-pill text-slate-300 hover:text-white"
                         }`}
                       >

@@ -6,7 +6,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#05070f",
+  themeColor: "#060402",
 };
 
 export const metadata: Metadata = {
@@ -29,7 +29,7 @@ export default function RootLayout({
     <html
       lang="en"
       className="dark"
-      data-academic-font="newsreader"
+      data-academic-font="jakarta"
       data-handwritten-style="newsreader"
     >
       <head>
@@ -49,7 +49,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="antialiased selection:bg-sky-500/30 selection:text-sky-100 min-h-screen">
+      <body className="antialiased bg-[#060402] selection:bg-amber-500/30 selection:text-amber-100 min-h-screen">
         {children}
       </body>
     </html>

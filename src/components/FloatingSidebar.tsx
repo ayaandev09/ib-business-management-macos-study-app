@@ -106,7 +106,7 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
       {isMobileSheet ? (
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 shrink-0">
           <div>
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-sky-300 block">
+            <span className="text-xs font-mono font-bold tracking-[0.2em] uppercase text-amber-400 block">
               SYLLABUS INDEX • MAC CODEX
             </span>
             <h2 className="text-base font-bold text-white">
@@ -134,11 +134,11 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
       ) : (
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 shrink-0 min-h-[44px] w-full mac-drag-region">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500/25 to-sky-500/20 border border-emerald-400/30 flex items-center justify-center overflow-hidden p-1 mac-no-drag shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400/25 via-rose-500/20 to-amber-600/25 border border-amber-400/40 flex items-center justify-center overflow-hidden p-1 mac-no-drag shrink-0">
               <IBBusinessAppLogo className="w-full h-full object-contain" />
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-sky-400 block font-mono truncate">
+              <span className="text-xs font-mono font-bold tracking-[0.2em] uppercase text-amber-400 block truncate">
                 IB BM HL // 2026
               </span>
               <h2 className="text-sm font-bold text-white tracking-tight truncate">
@@ -160,13 +160,13 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
       )}
 
       {/* Speed-Read & Progress Telemetry Bar */}
-          <div className="liquid-glass-bento rounded-2xl p-3 mb-3 shrink-0">
+      <div className="liquid-glass-bento rounded-2xl p-3 mb-3 shrink-0">
         <div className="flex items-center justify-between text-xs mb-2">
           <span className="text-slate-300 font-medium flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>Syllabus Mastered</span>
           </span>
-          <span className="font-mono font-bold text-sky-300">
+          <span className="font-mono font-bold text-amber-300">
             {completedTopicsCount}/{TOTAL_TOPICS_COUNT} ({progressPercent}%)
           </span>
         </div>
@@ -174,14 +174,14 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
         {/* Progress Fill */}
         <div className="w-full h-2 rounded-full bg-slate-950/80 overflow-hidden border border-white/10 mb-2.5">
           <div
-            className="h-full bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 rounded-full transition-all duration-300"
+            className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
 
-        <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+        <div className="flex items-center justify-between text-xs font-mono text-slate-400">
           <span className="flex items-center gap-1">
-            <Clock className="w-3 h-3 text-sky-300" />
+            <Clock className="w-3.5 h-3.5 text-amber-400" />
             {remainingReadingMinutes}m remaining
           </span>
           <span className="text-slate-300">5 Units + BMT</span>
@@ -208,7 +208,7 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
                 className="flex items-center justify-between p-3 cursor-pointer hover:bg-white/[0.04] transition-colors"
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-mono text-xs font-bold text-sky-400 shrink-0">
+                  <span className="font-mono text-xs font-bold text-amber-400 shrink-0">
                     {unit.badge}
                   </span>
                   <span className="text-xs font-semibold text-white truncate">
@@ -217,7 +217,7 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="font-mono text-[10px] text-slate-400">
+                  <span className="font-mono text-xs text-slate-400">
                     {unitDoneCount}/{unit.topics.length}
                   </span>
 
@@ -264,7 +264,7 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
                         onClick={() => handleSelectTopic(topic.id)}
                         className={`group flex items-center justify-between gap-2 p-2 rounded-xl text-xs transition-all cursor-pointer ${
                           isActive
-                            ? "bg-gradient-to-r from-sky-500/35 to-indigo-500/25 text-white border border-sky-400/50 shadow-sm"
+                            ? "bg-amber-500/20 text-amber-200 border border-amber-400/40 shadow-sm"
                             : "text-slate-300 hover:text-white hover:bg-white/[0.05]"
                         }`}
                       >
@@ -290,11 +290,11 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
                               <Circle className="w-4 h-4 text-slate-500 group-hover:text-slate-300" />
                             )}
                           </button>
-                          <span className="font-mono text-[10px] font-bold text-sky-300 shrink-0">
+                          <span className="font-mono text-xs font-bold text-amber-300 shrink-0">
                             {topic.displayCode}
                           </span>
                           <span
-                            className={`truncate ${
+                            className={`text-xs sm:text-sm truncate ${
                               isDone ? "line-through text-slate-500" : ""
                             }`}
                           >
@@ -302,9 +302,9 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 shrink-0 font-mono text-[10px] text-slate-400">
+                        <div className="flex items-center gap-1.5 shrink-0 font-mono text-xs text-slate-400">
                           {topic.level === "HL ONLY" && (
-                            <span className="px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 text-[9px] border border-rose-400/30">
+                            <span className="px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-400/30">
                               HL
                             </span>
                           )}
@@ -322,9 +322,9 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = React.memo(({
 
       {/* Footer Attribution (Mac Desktop) */}
       {!isMobileSheet && (
-        <div className="pt-3 mt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+        <div className="pt-3 mt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400 shrink-0">
           <span className="flex items-center gap-1.5">
-            <BookOpen className="w-3.5 h-3.5 text-sky-300" />
+            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
             IB BM HL 2026 Specification
           </span>
           <span className="font-mono text-slate-300">

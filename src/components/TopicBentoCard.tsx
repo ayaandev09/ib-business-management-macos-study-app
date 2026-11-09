@@ -42,13 +42,13 @@ const IMPORTANCE_BADGE_STYLES: Record<
   TopicData["strategicImportance"],
   string
 > = {
-  "CORE FOUNDATION": "bg-sky-500/15 text-sky-300 border-sky-400/35",
+  "CORE FOUNDATION": "bg-amber-500/15 text-amber-300 border-amber-400/35",
   "HIGH-YIELD HL":
     "bg-rose-500/20 text-rose-300 border-rose-400/40 shadow-[0_0_15px_-3px_rgba(244,63,94,0.3)]",
   "QUANTITATIVE TOOLKIT":
     "bg-emerald-500/15 text-emerald-300 border-emerald-400/35",
   "STRATEGIC EVALUATION":
-    "bg-purple-500/15 text-purple-300 border-purple-400/35",
+    "bg-amber-600/15 text-amber-200 border-amber-500/35",
   "PAPER 1 / 2 ESSENTIAL":
     "bg-amber-500/20 text-amber-200 border-amber-400/40",
 };
@@ -101,8 +101,8 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
         title={`${topic.displayCode} · ${topic.title}`}
         prompt={topic.examPromptTakeaway || topic.summary}
         answer={topic.analysis.coreThesis || topic.summary}
-        accent="#50C878"
-        secondary="#D4AF37"
+        accent="#d97706"
+        secondary="#991b1b"
         meta="ACTIVE RECALL"
       />
 
@@ -116,16 +116,16 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
           style={{
             background:
               topic.unitNumber === 1
-                ? "radial-gradient(circle, #0ea5e9, transparent 70%)"
+                ? "radial-gradient(circle, #d97706, transparent 70%)"
                 : topic.unitNumber === 2
-                  ? "radial-gradient(circle, #a855f7, transparent 70%)"
+                  ? "radial-gradient(circle, #f59e0b, transparent 70%)"
                   : topic.unitNumber === 3
                     ? "radial-gradient(circle, #10b981, transparent 70%)"
                     : topic.unitNumber === 4
-                      ? "radial-gradient(circle, #f59e0b, transparent 70%)"
+                      ? "radial-gradient(circle, #d97706, transparent 70%)"
                       : topic.unitNumber === 5
-                        ? "radial-gradient(circle, #38bdf8, transparent 70%)"
-                        : "radial-gradient(circle, #f43f5e, transparent 70%)",
+                        ? "radial-gradient(circle, #f59e0b, transparent 70%)"
+                        : "radial-gradient(circle, #991b1b, transparent 70%)",
           }}
         />
 
@@ -139,7 +139,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
                 {unit?.title.split(":")[0] || `UNIT ${topic.unitNumber}`}
               </span>
               <span
-                className={`font-mono text-[11px] font-semibold px-2.5 py-1 rounded-xl border ${
+                className={`font-mono text-xs font-semibold px-2.5 py-1 rounded-xl border ${
                   topic.level === "HL ONLY"
                     ? "bg-rose-500/20 text-rose-300 border-rose-400/40"
                     : "bg-white/[0.06] text-slate-300 border-white/10"
@@ -148,7 +148,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
                 {topic.level}
               </span>
               <span
-                className={`font-mono text-[11px] font-semibold px-2.5 py-1 rounded-xl border ${
+                className={`font-mono text-xs font-semibold px-2.5 py-1 rounded-xl border ${
                   IMPORTANCE_BADGE_STYLES[topic.strategicImportance]
                 }`}
               >
@@ -166,7 +166,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
             <p className="text-xs sm:text-sm text-slate-300 font-medium">
               {topic.subtitle}
             </p>
-            <div className="mt-2 text-[11px] text-slate-400 font-mono">
+            <div className="mt-2 text-xs text-slate-400 font-mono">
               SYLLABUS REF: {topic.syllabusRef}
             </div>
           </div>
@@ -202,7 +202,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
               className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer active:scale-95 select-none ${
                 isCompleted
                   ? "bg-emerald-500/25 border border-emerald-400/50 text-emerald-200 shadow-[0_0_20px_-4px_rgba(16,185,129,0.5)]"
-                  : "bg-white/10 hover:bg-emerald-500/20 text-white border border-white/20 hover:border-emerald-400/40"
+                  : "bg-white/10 hover:bg-amber-500/20 text-white border border-white/20 hover:border-amber-400/40"
               }`}
             >
               <div className={isCompleted ? "animate-tick-pop" : ""}>
@@ -224,11 +224,11 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
               onClick={() => setLearningPosture("learn-new")}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 learningPosture === "learn-new"
-                  ? "bg-sky-500/25 border border-sky-400/40 text-sky-200 shadow-[0_0_15px_-3px_rgba(14,165,233,0.4)]"
+                  ? "bg-amber-500/25 border border-amber-400/40 text-amber-200 shadow-[0_0_15px_-3px_rgba(217,119,6,0.4)]"
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              <GraduationCap className="w-4 h-4 text-sky-400" />
+              <GraduationCap className="w-4 h-4 text-amber-400" />
               <span>Study as New (Full Walkthrough)</span>
             </button>
 
@@ -312,8 +312,8 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
           {/* 3. High-Yield Practice Exam Prompts with Model Strategy */}
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-white/10 space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-mono font-bold text-sky-300 uppercase flex items-center gap-1.5">
-                <GraduationCap className="w-4 h-4 text-sky-400" />
+              <span className="text-xs font-mono font-bold text-amber-300 uppercase flex items-center gap-1.5">
+                <GraduationCap className="w-4 h-4 text-amber-400" />
                 Practice Exam Prompts &amp; Mark Scheme Criteria:
               </span>
               <div className="flex items-center gap-1 p-0.5 rounded-xl bg-white/5 border border-white/10">
@@ -349,8 +349,8 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
                 <div className="font-bold text-white">
                   <strong>Question: </strong> Define the term &lsquo;{topic.subSections[0]?.title.split(":")[0] || topic.title}&rsquo;. [2 marks]
                 </div>
-                <div className="text-slate-300 pl-3 border-l border-sky-400/40">
-                  <strong className="text-sky-300">Mark Scheme Key: </strong>
+                <div className="text-slate-300 pl-3 border-l border-amber-400/40">
+                  <strong className="text-amber-300">Mark Scheme Key: </strong>
                   Award [1] for basic outline and [2] for an authoritative, syllabus-accurate definition with key economic criteria.
                 </div>
               </div>
@@ -361,9 +361,9 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
                 <div className="font-bold text-white">
                   <strong>Question: </strong> Explain one advantage and one disadvantage of implementing {topic.subSections[0]?.title} for a commercial business. [4 marks]
                 </div>
-                <div className="text-slate-300 pl-3 border-l border-sky-400/40 space-y-1">
-                  <div><strong className="text-sky-300">Advantage: </strong>{topic.subSections[0]?.analyticalTakeaway}</div>
-                  <div><strong className="text-sky-300">Disadvantage: </strong>{topic.analysis.commonMisconceptions[0] || "High capital setup cost and operational transition friction."}</div>
+                <div className="text-slate-300 pl-3 border-l border-amber-400/40 space-y-1">
+                  <div><strong className="text-amber-300">Advantage: </strong>{topic.subSections[0]?.analyticalTakeaway}</div>
+                  <div><strong className="text-amber-300">Disadvantage: </strong>{topic.analysis.commonMisconceptions[0] || "High capital setup cost and operational transition friction."}</div>
                 </div>
               </div>
             )}
@@ -373,8 +373,8 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
                 <div className="font-bold text-white">
                   <strong>Essay Prompt: </strong> With reference to an organization of your choice, evaluate {topic.examPromptTakeaway.slice(0, 140)}... [10 marks]
                 </div>
-                <div className="p-2.5 rounded-xl bg-sky-950/40 border border-sky-400/20 text-[11px] text-sky-200 font-mono space-y-1">
-                  <div className="font-bold text-sky-300">SLAP Evaluation Formula for 10/10:</div>
+                <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-400/20 text-xs text-amber-200 font-mono space-y-1">
+                  <div className="font-bold text-amber-300">SLAP Evaluation Formula for 10/10:</div>
                   <div>• <strong>S</strong>takeholders: Analyze conflicting impacts (shareholders vs staff vs customers).</div>
                   <div>• <strong>L</strong>ong-term vs Short-term: Immediate upfront costs vs long-run strategic survival.</div>
                   <div>• <strong>A</strong>ssumptions: What external STEEPLE conditions must hold true?</div>
@@ -444,7 +444,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
             </div>
 
             <div className="p-4 rounded-2xl bg-slate-950/50 border border-white/10">
-              <span className="font-mono text-xs font-semibold text-sky-300 flex items-center gap-1.5 mb-1.5">
+              <span className="font-mono text-xs font-semibold text-amber-300 flex items-center gap-1.5 mb-1.5">
                 <BookOpenCheck className="w-3.5 h-3.5" />
                 Theoretical Foundations
               </span>
@@ -455,8 +455,8 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
           </div>
 
           {/* Strategic Evaluation (AO3 & AO4) */}
-          <div className="p-4 rounded-2xl bg-sky-950/30 border border-sky-400/25">
-            <span className="font-mono text-xs font-semibold text-sky-300 flex items-center gap-1.5 mb-1.5">
+          <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-400/25">
+            <span className="font-mono text-xs font-semibold text-amber-300 flex items-center gap-1.5 mb-1.5">
               <GraduationCap className="w-3.5 h-3.5" />
               Evaluation Grid (AO3 Analysis & AO4 Evaluation)
             </span>
@@ -572,14 +572,14 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
                 </p>
 
                 {/* Analytical Takeaway */}
-                <div className="ml-6.5 p-2.5 rounded-xl bg-sky-500/10 border border-sky-400/20 text-xs text-sky-200">
-                  <span className="font-bold text-sky-300">Exam Takeaway: </span>
+                <div className="ml-6.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-400/20 text-xs text-amber-200">
+                  <span className="font-bold text-amber-300">Exam Takeaway: </span>
                   {sub.analyticalTakeaway}
                 </div>
 
                 {/* Key Formula / Framework if present */}
                 {sub.keyFormulaOrFramework && (
-                  <div className="ml-6.5 mt-2 p-2 rounded-xl bg-emerald-500/10 border border-emerald-400/20 font-mono text-[11px] text-emerald-300">
+                  <div className="ml-6.5 mt-2 p-2 rounded-xl bg-emerald-500/10 border border-emerald-400/20 font-mono text-xs text-emerald-300">
                     <span className="font-bold">Formula / Core Rule: </span>
                     {sub.keyFormulaOrFramework}
                   </div>
@@ -596,7 +596,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
       {topic.cases.length > 0 && (
         <section className="liquid-glass-bento rounded-3xl p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Building2 className="w-4 h-4 text-sky-400" />
+            <Building2 className="w-4 h-4 text-amber-400" />
             <h2 className="text-sm font-bold text-white uppercase tracking-wider">
               Real-World Corporate Applications & Case Studies ({topic.cases.length})
             </h2>
@@ -729,22 +729,22 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
           7. STUDY-AS-NEW FORMATIVE CHECKPOINT (CHECK YOUR UNDERSTANDING)
           ===================================================================== */}
       {learningPosture === "learn-new" && (
-        <section className="liquid-glass-bento rounded-3xl p-6 border-sky-400/30 bg-sky-950/15 space-y-4 shadow-[0_0_30px_-5px_rgba(14,165,233,0.15)] animate-in fade-in duration-200">
+        <section className="liquid-glass-bento rounded-3xl p-6 border-amber-400/30 bg-amber-950/15 space-y-4 shadow-[0_0_30px_-5px_rgba(217,119,6,0.15)] animate-in fade-in duration-200">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <BookOpenCheck className="w-5 h-5 text-sky-400" />
+              <BookOpenCheck className="w-5 h-5 text-amber-400" />
               <h2 className="text-base font-bold text-white tracking-wide">
                 Check Your Understanding • First-Principles Mastery Check
               </h2>
             </div>
-            <span className="font-mono text-xs px-2.5 py-1 rounded-xl bg-sky-500/20 text-sky-200 border border-sky-400/30">
+            <span className="font-mono text-xs px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-200 border border-amber-400/30">
               🎓 Study as New Checkpoint
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-white/10 space-y-3">
-            <div className="text-xs font-mono font-bold text-sky-300 uppercase flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-sky-400" />
+            <div className="text-xs font-mono font-bold text-amber-300 uppercase flex items-center gap-1.5">
+              <HelpCircle className="w-4 h-4 text-amber-400" />
               <span>Core Application Challenge</span>
             </div>
             <p className="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed">
@@ -763,7 +763,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
 
               <button
                 onClick={() => setShowCheckpointAnswer((prev) => !prev)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-400/30 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 transition-all cursor-pointer"
               >
                 {showCheckpointAnswer ? (
                   <>

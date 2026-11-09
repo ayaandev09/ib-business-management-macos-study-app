@@ -198,10 +198,10 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping pointer-events-none" />
             </button>
             <div className="leading-tight min-w-0">
-              <span className="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase truncate block">
+              <span className="text-xs font-mono font-bold tracking-[0.18em] text-amber-400 uppercase truncate block">
                 IB BUSINESS
               </span>
-              <span className="text-[11px] font-semibold text-white tracking-tight truncate block">
+              <span className="text-xs font-semibold text-white tracking-tight truncate block">
                 2026 Codex
               </span>
             </div>
@@ -222,7 +222,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={() => setStudyGoal(studyGoal === "revise" ? "learn" : "revise")}
               title={`Active Mode: ${studyGoal === "revise" ? "Revision (Sprint)" : "Study (Deep)"}. Tap to toggle.`}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer active:scale-95 ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer active:scale-95 ${
                 studyGoal === "revise"
                   ? "bg-amber-500/20 text-amber-300 border-amber-400/50 shadow-sm"
                   : "bg-emerald-500/20 text-emerald-300 border-emerald-400/50 shadow-sm"
@@ -250,7 +250,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               title="Browse Syllabus Modules"
               className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white active:scale-90 transition-all cursor-pointer"
             >
-              <ListFilter className="w-4 h-4 text-emerald-300" />
+              <ListFilter className="w-4 h-4 text-amber-400" />
             </button>
 
             {/* Search Toggle Button */}
@@ -285,7 +285,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               title={sidebarCollapsed ? "Expand Module Navigation Sidebar (⌘B)" : "Collapse Sidebar for Wide View (⌘B)"}
               className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer soft-button shrink-0 border ${
                 sidebarCollapsed
-                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/40 shadow-sm"
+                  ? "bg-amber-500/20 text-amber-300 border-amber-400/40 shadow-sm"
                   : "bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border-white/10"
               }`}
             >
@@ -298,14 +298,14 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               title="Click to run live IB BM System Diagnostics"
               className="flex items-center gap-2 min-w-0 text-left cursor-pointer group"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500/25 via-teal-500/20 to-sky-500/25 border border-emerald-400/40 flex items-center justify-center p-1 shadow-md relative shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400/25 via-rose-500/20 to-amber-600/25 border border-amber-400/40 flex items-center justify-center p-1 shadow-md relative shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
                 <IBBusinessAppLogo className="w-full h-full object-contain" />
               </div>
               <div className="min-w-0 leading-tight">
-                <span className="text-[9px] font-mono font-bold tracking-[0.2em] text-emerald-400 uppercase block truncate">
+                <span className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.18em] text-amber-400 uppercase block truncate">
                   C-SUITE MATRIX // IB BM
                 </span>
-                <span className="text-xs font-semibold text-white tracking-tight block truncate">
+                <span className="text-xs sm:text-sm font-semibold text-white tracking-tight block truncate">
                   Business Management Codex
                 </span>
               </div>
@@ -318,11 +318,11 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={openSpotlight}
               title="Search Topics & Cases (⌘K)"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/50 hover:bg-black/70 border border-white/10 hover:border-emerald-400/40 text-slate-300 hover:text-white cursor-pointer transition-all shrink-0"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/50 hover:bg-black/70 border border-white/10 hover:border-amber-400/40 text-slate-300 hover:text-white cursor-pointer transition-all shrink-0"
             >
-              <Search className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-[11px] font-medium text-slate-300 hidden md:inline">Search</span>
-              <kbd className="inline-flex items-center px-1 py-0.2 rounded text-[9px] font-mono font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/25">
+              <Search className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-xs font-medium text-slate-300 hidden md:inline">Search</span>
+              <kbd className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-amber-300 bg-amber-500/15 border border-amber-400/25">
                 ⌘K
               </kbd>
             </button>
@@ -339,7 +339,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                 }`}
               >
                 <Zap className="w-3 h-3 text-amber-300" />
-                <span className="text-[11px]">Revise</span>
+                <span className="text-xs">Revise</span>
               </button>
               <button
                 onClick={() => setStudyGoal("learn")}
@@ -351,7 +351,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                 }`}
               >
                 <BookOpen className="w-3 h-3 text-emerald-300" />
-                <span className="text-[11px]">Study</span>
+                <span className="text-xs">Study</span>
               </button>
             </div>
 
@@ -359,10 +359,10 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
             <button
               onClick={openExamSprint}
               title="Launch Timed Exam Sprint (⌘E)"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-400/35 hover:bg-emerald-500/25 shadow-sm soft-button shrink-0"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border bg-amber-500/15 text-amber-200 border-amber-400/35 hover:bg-amber-500/25 shadow-sm soft-button shrink-0"
             >
-              <Timer className="w-3.5 h-3.5 text-emerald-300 animate-pulse" />
-              <span className="text-[10px] font-mono text-emerald-400/80">⌘E</span>
+              <Timer className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+              <span className="text-xs font-mono font-bold text-amber-300">⌘E</span>
             </button>
 
             {/* Pro Analytical Inspector Toggle (Shown only when tucked away to prevent collision) */}
@@ -370,10 +370,10 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
               <button
                 onClick={toggleInspector}
                 title="Unfold Analytical Inspector from Top Navigation Bar (⌘I)"
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border soft-button shrink-0 bg-emerald-950/60 text-emerald-300 border-emerald-400/40 tucked-pill-beacon-emerald"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border soft-button shrink-0 bg-amber-500/15 text-amber-200 hover:text-white border-amber-400/50 hover:border-amber-300 shadow-[0_0_18px_rgba(245,158,11,0.35)] tucked-pill-beacon"
               >
-                <Briefcase className="w-3.5 h-3.5 text-emerald-300" />
-                <span className="text-[10px] font-mono text-emerald-400/80">⌘I</span>
+                <Briefcase className="w-3.5 h-3.5 text-amber-300" />
+                <span className="text-xs font-mono font-bold text-amber-300">⌘I</span>
               </button>
             )}
 
@@ -404,7 +404,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                 onClick={() => setViewMode(mode.id)}
                 className={`relative col-span-1 flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-1 rounded-xl text-xs font-bold transition-colors cursor-pointer min-w-0 overflow-hidden ${
                   isActive
-                    ? "text-emerald-200"
+                    ? "text-amber-200"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -412,10 +412,10 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
                   <motion.div
                     layoutId="activeNavTabIndicator"
                     transition={{ type: "spring", stiffness: 420, damping: 32 }}
-                    className="absolute inset-0 rounded-xl bg-emerald-500/20 border border-emerald-400/45 shadow-sm pointer-events-none"
+                    className="absolute inset-0 rounded-xl bg-amber-500/25 border border-amber-400/50 shadow-md shadow-amber-500/20 pointer-events-none"
                   />
                 )}
-                <span className={`relative z-10 ${isActive ? "text-emerald-300 shrink-0" : "text-slate-400 shrink-0"}`}>
+                <span className={`relative z-10 ${isActive ? "text-amber-300 shrink-0" : "text-slate-400 shrink-0"}`}>
                   {mode.icon}
                 </span>
                 <span className="relative z-10 text-xs truncate">{mode.shortLabel}</span>
@@ -429,7 +429,7 @@ export const TopCommandBar: React.FC<TopCommandBarProps> = React.memo(({
           isOpen={isShortcutsOpen}
           onClose={() => setIsShortcutsOpen(false)}
           appName="IB Business Codex"
-          accentColor="#10b981"
+          accentColor="#d97706"
           onOpenTour={onOpenWalkthrough}
         />
       </header>
