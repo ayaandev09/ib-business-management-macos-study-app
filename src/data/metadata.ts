@@ -480,7 +480,7 @@ export const FORMULA_BANK: FormulaItem[] = [
     name: "Net Profit Margin",
     unit: "Unit 3 – Finance",
     hlOnly: false,
-    formula: "\\text{NPM} = \\left( \\frac{\\text{Net Profit Before Interest \\& Tax}}{\\text{Sales Revenue}} \\right) \\times 100",
+    formula: "\\text{NPM} = \\left( \\frac{\\text{Net Profit Before Interest and Tax}}{\\text{Sales Revenue}} \\right) \\times 100",
     variables: [
       { name: "Net Profit (Operating)", definition: "Gross Profit minus all indirect operating expenses (overheads)." },
       { name: "Sales Revenue", definition: "Total turnover." },
@@ -496,7 +496,7 @@ export const FORMULA_BANK: FormulaItem[] = [
     name: "Return on Capital Employed",
     unit: "Unit 3 – Finance",
     hlOnly: false,
-    formula: "\\text{ROCE} = \\left( \\frac{\\text{Net Profit Before Interest \\& Tax}}{\\text{Capital Employed}} \\right) \\times 100",
+    formula: "\\text{ROCE} = \\left( \\frac{\\text{Net Profit Before Interest and Tax}}{\\text{Capital Employed}} \\right) \\times 100",
     variables: [
       { name: "Net Profit (Operating)", definition: "Earnings before interest and tax (EBIT)." },
       { name: "Capital Employed", definition: "Equity + Non-Current Liabilities (or Total Assets - Current Liabilities)." },
