@@ -3,7 +3,9 @@
 import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { AmbientAuroraCanvas } from "@/components/AmbientAuroraCanvas";
-import { FloatingSidebar } from "@/components/FloatingSidebar";
+import { SideNav } from "@/components/SideNav";
+import { SceneSwitcher } from "@/components/SceneSwitcher";
+import { HomeDashboard } from "@/components/HomeDashboard";
 import { TopCommandBar } from "@/components/TopCommandBar";
 import { WidgetBridge } from "@/components/WidgetBridge";
 import { StudyMiniHomepage } from "@/components/StudyMiniHomepage";
@@ -288,7 +290,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
           ===================================================================== */}
       <div className="w-full max-w-[1720px] mx-auto p-2.5 sm:p-4 flex gap-4 xl:gap-5 items-start mac-dashboard-shell relative z-10">
         {/* Left Floating Sidebar */}
-        <FloatingSidebar isMobileSheet={false} />
+        <SideNav />
 
         {/* Right Main Content Workspace */}
         <main
@@ -303,7 +305,7 @@ export default function IBBusinessManagementStudyDashboardPage() {
           />
 
           {/* Mini Homepage & Live Widget Telemetry Hub */}
-          <StudyMiniHomepage />
+          
 
           {/* =====================================================================
               BUTTER-SMOOTH VIEW CONTENT WORKSPACE

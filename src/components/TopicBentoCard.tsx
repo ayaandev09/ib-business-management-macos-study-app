@@ -53,6 +53,33 @@ const IMPORTANCE_BADGE_STYLES: Record<
     "bg-amber-500/20 text-amber-200 border-amber-400/40",
 };
 
+/** Hides the long analysis blocks until the student asks for them. */
+function DeepDive({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="space-y-5">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3.5 text-left cursor-pointer transition-colors"
+      >
+        <span>
+          <span className="block text-sm font-semibold text-white">
+            {open ? "Hide deeper analysis" : "Show deeper analysis"}
+          </span>
+          <span className="block text-xs text-slate-400">
+            Summary, themes, close reading and critics
+          </span>
+        </span>
+        <span className="text-amber-300 text-lg">{open ? "−" : "+"}</span>
+      </button>
+      {open && <div className="space-y-5">{children}</div>}
+    </div>
+  );
+}
+
+
 export const TopicBentoCard = React.memo(function TopicBentoCard({
   topic,
   isDeferred = false,
@@ -419,6 +446,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
         </div>
       </section>
 
+      <DeepDive>
       {/* =====================================================================
           3. IN-DEPTH SYLLABUS ANALYSIS BENTO
           ===================================================================== */}
@@ -878,6 +906,7 @@ export const TopicBentoCard = React.memo(function TopicBentoCard({
           </p>
         </div>
       </footer>
+      </DeepDive>
     </article>
   );
 });

@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { ALL_TOPICS, SYLLABUS_UNITS, UnitId, ConceptId } from "@/data";
 
-export type ViewMode = "focus" | "stream" | "matrix" | "lexicon" | "revision";
+export type ViewMode = "home" | "focus" | "stream" | "matrix" | "lexicon" | "revision";
 export type DeviceMode = "mac" | "iphone16e";
 export type StudyGoal = "revise" | "learn";
 export type LearningPosture = "learn-new" | "pre-lesson-cram";
@@ -113,7 +113,7 @@ export const useStudyStore = create<StudyStoreState>()(
       activeTopicId: "u1-1",
       activeUnitFilter: "all",
       activeConceptFilter: "all",
-      viewMode: "focus",
+      viewMode: "home",
       deviceMode: "mac",
       studyGoal: "revise",
       learningPosture: "pre-lesson-cram",
@@ -126,7 +126,7 @@ export const useStudyStore = create<StudyStoreState>()(
       chapterSheetOpen: false,
       diagnosticsActive: false,
       syncToastMessage: null,
-      isInspectorOpen: true,
+      isInspectorOpen: false,
       isExamSprintActive: false,
       isSpotlightOpen: false,
       widgetTemplate: "medium",
